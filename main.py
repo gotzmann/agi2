@@ -27,7 +27,7 @@ def main():
 
     print("\n=== START ===")
 
-    history_tensor = None
+    history = None
     models, tokenizer = setup_model_and_tokenizer()
 
     for query in dialog:
