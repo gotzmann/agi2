@@ -34,7 +34,7 @@ def main():
 
     for query in dialog:
         print("\n => cur_query_list = ", query)
-        response, history = generate_text(models, tokenizer, query, tuple(history, response))
+        response, history = generate_text(models, tokenizer, query, (history, response))
         print("\n === RESPONSE ===\n\n", response)
         print("\n === HISTORY SIZE ===\n\n", history.Size())
         print("\n === HISTORY ===\n\n", history)
