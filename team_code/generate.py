@@ -204,7 +204,12 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             status = ""
 
             if id == "":
-                id = str(uuid.uuid4()) # todo 
+                id = str(uuid.uuid4()) # todo
+
+            prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
+
+            if history_tensor is None: # fixme
+                prompt = PROMPT + prompt
 
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
