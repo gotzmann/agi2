@@ -54,8 +54,12 @@ def gen_answer(model, tokenizer, query, history=None):
         inputs_embeds=query,
         **gen_params,
     )
+
     out = out[:, 1:]
     generated_texts = tokenizer.batch_decode(out)
+
+    print("\n=== gen_answer ===\n", generated_texts[0])
+
     return generated_texts[0]
 
 
