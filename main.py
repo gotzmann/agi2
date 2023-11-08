@@ -34,12 +34,19 @@ def main():
     response = None
 
     for query in dialog:
-        print("\n => cur_query_list = ", query)
-        tmp = (history, response)
-        response, history = generate_text(models, tokenizer, query, torch.tensor(tmp))
-        print("\n === RESPONSE ===\n\n", response)
-        print("\n === HISTORY SIZE ===\n\n", history.Size())
-        print("\n === HISTORY ===\n\n", history)
+        
+        print("\n=> query = ", query)
+
+        tmp = None
+        if history != None and response != None:
+            tmp = (history, response)
+            tmp = torch.tensor(tmp)
+
+        response, history = generate_text(models, tokenizer, query, tmp)
+
+        print("\n === RESPONSE ===\n", response)
+        print("\n === HISTORY SIZE ===\n", history.Size())
+        print("\n === HISTORY ===\n", history)
 
     print("\n=== FINISH ===")
 
