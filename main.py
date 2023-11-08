@@ -35,18 +35,16 @@ def main():
 
     for query in dialog:
 
-        print("\n=> query = ", query)
+        print("\n=== [ QUERY ] ===\n", query)
 
-        #tupl = None
-        if history != None and response != None:
+        if history != None:
             history = (history, response)
-            # tmp = torch.tensor(tmp)
 
         response, history = generate_text(models, tokenizer, query, history)
 
-        print("\n === RESPONSE ===\n", response)
-        print("\n === HISTORY SIZE ===\n", len(history))
-        print("\n === HISTORY ===\n", history)
+        print("\n=== [ RESPONSE ] ===\n", response)
+        # print("\n === HISTORY SIZE ===\n", len(history))
+        # print("\n === HISTORY ===\n", history)
 
     print("\n=== FINISH ===")
 

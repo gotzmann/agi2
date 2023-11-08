@@ -17,7 +17,7 @@ from imagebind.models.imagebind_model import ModalityType
 from .utils import get_query_from_input, get_text_emb
 
 ID = "" # todo
-PROMPT = "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!\n"
+PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
 
 # APP_PATH = "/Users/me/app/"
 APP_PATH = "/app/"
