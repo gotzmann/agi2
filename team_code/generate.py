@@ -54,13 +54,18 @@ def gen_answer(model, tokenizer, query, history=None):
 
     query = torch.cat([history, query], dim=1)
 
+    print("\n\n=== gen_answer :: query ===\n\n", query)
+
     out = model.generate(
         inputs_embeds=query,
         **gen_params,
     )
 
     out = out[:, 1:]
-    generated_texts = tokenizer.batch_decode(out)
+    print("\n\n=== gen_answer :: out ===\n\n", out)
+
+#    generated_texts = tokenizer.batch_decode(out)
+    generated_texts = tokenizer.decode(out)
 
     print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
 
@@ -162,22 +167,22 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     # -- handle history
 
-    if history_tensor is not None:
-        try:
-            history_tensor = torch.concat(
-                [history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])],
-                dim=1,
-            )
-        except Exception as error:
-            print("\n=== [ERR] === Exception with history_tensor ===\n", error)
-
-    else:
-        # If the current history is empty
-        # it is assigned to the system prompt
+    # If the current history is empty - it is assigned to the system prompt
+    if history_tensor is None:
 #        PROMPT = "This is a dialog with AI assistant.\n"
-        prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
-        prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
-        history_tensor = prompt_embeddings
+#        prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+#        prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
+#        history_tensor = prompt_embeddings
+        history_tensor = get_text_emb(model[0], tokenizer, PROMPT)
+    else:
+#        try:
+        history_tensor = torch.concat(
+            [
+                history_tensor[0], 
+                get_text_emb(model[0], tokenizer, history_tensor[1])
+            ], dim=1)
+#        except Exception as error:
+#            print("\n=== [ERR] === Exception with history_tensor ===\n", error)
 
     # debug
      
@@ -233,8 +238,6 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     # -- update history and return results    
 
     history_tensor = torch.concat([history_tensor, prompt], dim=1)
- #   tmp = [ history_tensor, prompt ]
- #   history_tensor = torch.Tensor(tmp) # debug
 
     return response, history_tensor
 
