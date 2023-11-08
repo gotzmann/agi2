@@ -181,8 +181,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     # debug
      
-    print("\n\n=== tokenizer.batch_decode(history_tensor) ===\n\n") 
-    tokenizer.batch_decode(history_tensor)    
+    #print("\n\n=== tokenizer.batch_decode(history_tensor) ===\n\n") 
+    #tokenizer.batch_decode(history_tensor)    
 
     # -- redirect simple text questions to LLaMAZoo
 
