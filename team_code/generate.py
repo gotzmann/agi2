@@ -169,7 +169,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             )
         except:
             print("[ERR] Exception with history_tensor")
-              
+
     else:
         # If the current history is empty
         # it is assigned to the system prompt
@@ -226,7 +226,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     # -- update history and return results    
 
-    history_tensor = torch.concat([history_tensor, prompt], dim=1)
+ #   history_tensor = torch.concat([history_tensor, prompt], dim=1)
+    history_tensor = torch.Tensor([history_tensor, prompt]) # debug
 
     return response, history_tensor
 

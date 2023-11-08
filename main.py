@@ -15,10 +15,10 @@ dialog = [
     ],
     [
         {"type": "text", "content": "What animal made that sound??"}, 
-        {"type": "audio", "content": "path_to_the_audio"}
+        {"type": "audio", "content": "0000.wav"}
     ],
     [
-        {"type": "image", "content": "path_to_the_image"}, 
+        {"type": "image", "content": "00001.png"}, 
         {"type": "text", "content": "What animal is on the picture?"}
     ]
 ]
