@@ -54,7 +54,7 @@ def gen_answer(model, tokenizer, query, history=None):
 
     query = torch.cat([history, query], dim=1)
 
-    print("\n\n=== gen_answer :: query ===\n\n", query)
+#    print("\n\n=== gen_answer :: query ===\n\n", query)
 
     out = model.generate(
         inputs_embeds=query,
@@ -68,7 +68,7 @@ def gen_answer(model, tokenizer, query, history=None):
 
     generated_texts = tokenizer.batch_decode(out)
 
-    print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
+#    print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
 
     return generated_texts[0]
 
@@ -211,17 +211,17 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 "prompt": prompt 
             })
 
-            print(f"Status Code: {r.status_code}")
+#            print(f"Status Code: {r.status_code}")
 
             while r.status_code == 200 and status != "finished":
 
                 time.sleep(10) # debug
                 r = requests.get("http://127.0.0.1:8888/jobs/" + id)
-                print(r.json()) # debug
+#                print(r.json()) # debug
                 status = r.json()["status"]
             
             response = r.json()["output"]
-            print("\n=== RESPONSE ===\n", response)
+            print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
         except Exception as error:
 
