@@ -34,7 +34,7 @@ def main():
     response = None
 
     for query in dialog:
-        
+
         print("\n=> query = ", query)
 
         tmp = None
@@ -45,7 +45,7 @@ def main():
         response, history = generate_text(models, tokenizer, query, tmp)
 
         print("\n === RESPONSE ===\n", response)
-        print("\n === HISTORY SIZE ===\n", history.Size())
+        print("\n === HISTORY SIZE ===\n", len(history))
         print("\n === HISTORY ===\n", history)
 
     print("\n=== FINISH ===")
