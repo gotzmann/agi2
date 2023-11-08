@@ -61,12 +61,12 @@ def gen_answer(model, tokenizer, query, history=None):
         **gen_params,
     )
 
-    print("\n\n=== gen_answer :: out 1 ===\n\n", out)
+#    print("\n\n=== gen_answer :: out 1 ===\n\n", out)
+    # remove BOS token
     out = out[:, 1:]
-    print("\n\n=== gen_answer :: out 2 ===\n\n", out)
+#    print("\n\n=== gen_answer :: out 2 ===\n\n", out)
 
-#    generated_texts = tokenizer.batch_decode(out)
-    generated_texts = tokenizer.decode(out)
+    generated_texts = tokenizer.batch_decode(out)
 
     print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
 
