@@ -61,8 +61,9 @@ def gen_answer(model, tokenizer, query, history=None):
         **gen_params,
     )
 
+    print("\n\n=== gen_answer :: out 1 ===\n\n", out)
     out = out[:, 1:]
-    print("\n\n=== gen_answer :: out ===\n\n", out)
+    print("\n\n=== gen_answer :: out 2 ===\n\n", out)
 
 #    generated_texts = tokenizer.batch_decode(out)
     generated_texts = tokenizer.decode(out)
@@ -170,10 +171,10 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     # If the current history is empty - it is assigned to the system prompt
     if history_tensor is None:
 #        PROMPT = "This is a dialog with AI assistant.\n"
-#        prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
-#        prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
-#        history_tensor = prompt_embeddings
-        history_tensor = get_text_emb(model[0], tokenizer, PROMPT)
+        prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+        prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
+        history_tensor = prompt_embeddings
+# debug        history_tensor = get_text_emb(model[0], tokenizer, PROMPT)
     else:
 #        try:
         history_tensor = torch.concat(
