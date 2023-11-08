@@ -12,6 +12,7 @@ N_MODALITY_EMBS = 32
 
 # utils function that parses the format of the input query to a single sequence
 def get_query_from_input(model, tokenizer, input_list):
+
     base_model = model[0]
     model_imagebind = model[1]
     img_tokens_emb = model[2]
@@ -24,7 +25,7 @@ def get_query_from_input(model, tokenizer, input_list):
     ai_embeddings = base_model.model.embed_tokens(ai_ids)
 
     # debug
-    print("\nIDS: \\nBot: ", ai_ids)
+#    print("\nIDS: \\nBot: ", ai_ids)
 #    print("\nEMBDS: \\nBot: ", ai_embeddings)
 
     prompt = "\nUser: "
@@ -32,7 +33,7 @@ def get_query_from_input(model, tokenizer, input_list):
     prompt_embeddings = base_model.model.embed_tokens(prompt_ids)
 
     # debug
-    print("\nIDS: \\nUser: ", prompt_ids)
+#    print("\nIDS: \\nUser: ", prompt_ids)
 
     all_emb.append(prompt_embeddings)
 
@@ -91,6 +92,7 @@ def get_query_from_input(model, tokenizer, input_list):
             all_emb,
             dim=1,
         )
+        
     return embeddings
 
 

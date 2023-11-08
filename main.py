@@ -32,7 +32,9 @@ def main():
 
     for cur_query_list in DIALOGUE_DICT:
         print("\n => cur_query_list = ", cur_query_list)
-        generate_text(models, tokenizer, cur_query_list, history_tensor)
+        response, history_tensor = generate_text(models, tokenizer, cur_query_list, history_tensor)
+        print("\n\n === RESPONSE ===\n\n", response)
+        print("\n\n === HISTORY TENSOR ===\n\n", response)
 
     print("\n\n=== FINISH ===")
 
