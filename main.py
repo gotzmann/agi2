@@ -3,7 +3,7 @@ from team_code.generate import setup_model_and_tokenizer, generate_text
 
 # --- MAIN ---
 
-DIALOGUE_DICT = [
+dialog = [
     [
         {"type": "text", "content": "What is the largest ocean in the world?"}
     ], 
@@ -25,18 +25,18 @@ DIALOGUE_DICT = [
 
 def main():
 
-    print("\n\n=== START ===")
+    print("\n=== START ===")
 
     history_tensor = None
     models, tokenizer = setup_model_and_tokenizer()
 
-    for cur_query_list in DIALOGUE_DICT:
-        print("\n => cur_query_list = ", cur_query_list)
-        response, history_tensor = generate_text(models, tokenizer, cur_query_list, history_tensor)
-        print("\n\n === RESPONSE ===\n\n", response)
-        print("\n\n === HISTORY TENSOR ===\n\n", response)
+    for query in dialog:
+        print("\n => cur_query_list = ", query)
+        response, history = generate_text(models, tokenizer, query, history)
+        print("\n === RESPONSE ===\n\n", response)
+        print("\n === HISTORY ===\n\n", history)
 
-    print("\n\n=== FINISH ===")
+    print("\n=== FINISH ===")
 
 if __name__ == "__main__":
     main()

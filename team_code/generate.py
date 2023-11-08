@@ -193,11 +193,11 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 status = r.json()["status"]
             
             response = r.json()["output"]
-            print("\n\n=== RESPONSE ===\n\n", response)
+            print("\n=== RESPONSE ===\n", response)
 
         except Exception as error:
 
-            print("\n\n=== EXCEPTION ===\n\n", error)
+            print("\n=== EXCEPTION ===\n", error)
 
     # -- otherwise handle with baseline        
 
