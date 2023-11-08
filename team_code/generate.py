@@ -46,8 +46,11 @@ gen_params = {
     "num_return_sequences": 1,
 }
 
+# --
+
 @torch.no_grad()
 def gen_answer(model, tokenizer, query, history=None):
+
     query = torch.cat([history, query], dim=1)
 
     out = model.generate(
@@ -62,6 +65,7 @@ def gen_answer(model, tokenizer, query, history=None):
 
     return generated_texts[0]
 
+# --
 
 def imagebind_huge(pretrained=False):
     model = imagebind_model.ImageBindModel(
@@ -211,9 +215,10 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
 
-    if response == None or response == "":
+    # if response == None or response == "":
 
-        response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+    response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+    print("\n=== BASELINE RESPONSE ===\n", response)
 
     # -- update history and return results    
 
