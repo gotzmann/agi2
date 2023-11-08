@@ -14,7 +14,7 @@ RUN apt install -y mc
 RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
     tar -xf go1.20.linux-amd64.tar.gz -C /usr/local
 
-# PATH=$PATH:/usr/local/go/bin LLAMA_CUBLAS=1 CUDA_PATH=/usr/local/cuda-11.7 CUDA_DOCKER_ARCH=sm_80 make cuda && \
+# PATH=$PATH:/usr/local/go/bin LLAMA_CUBLAS=1 PATH=$PATH:/usr/local/go/bin CUDA_PATH=/usr/local/cuda-11 CUDA_DOCKER_ARCH=sm_80 make cuda && \
 
 RUN git clone https://github.com/gotzmann/llamazoo.git && \
     cd ./llamazoo && \
@@ -34,8 +34,8 @@ WORKDIR /app
 
 COPY requirements.txt ./
 
-#RUN pip install https://github.com/enthought/mayavi/zipball/master
-#RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
+RUN pip install https://github.com/enthought/mayavi/zipball/master
+RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 RUN pip install --no-cache-dir -r requirements.txt
 
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16

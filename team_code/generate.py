@@ -125,8 +125,12 @@ def setup_model_and_tokenizer():
     )
 
     projection = None
+#    projection = torch.load(
+#        f"{workdir}/team_code/ckpts/projection_LLaMa-7b-EN-Linear-ImageBind",
+#        map_location=model.device,
+#    )
     projection = torch.load(
-        f"{workdir}/team_code/ckpts/projection_LLaMa-7b-EN-Linear-ImageBind",
+        APP_PATH + "projection_LLaMa-7b-EN-Linear-ImageBind",
         map_location=model.device,
     )
 
