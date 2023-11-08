@@ -16,6 +16,8 @@ from imagebind.models.imagebind_model import ModalityType
 
 from .utils import get_query_from_input, get_text_emb
 
+ID = "" # todo
+
 # APP_PATH = "/Users/me/app/"
 APP_PATH = "/app/"
 
@@ -93,7 +95,7 @@ def setup_model_and_tokenizer():
         stderr=subprocess.PIPE)
 
     print("\nWaiting for a minute...")
-    time.sleep(10) # debug
+#    time.sleep(10) # debug
 
     tokenizer = None
     model = None
@@ -166,17 +168,19 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     # -- redirect simple text questions to LLaMAZoo
 
-    prompt = None
+    # prompt = None
     response = None
 
     if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
 
-        prompt = cur_query_list[0]["content"]
-
         try:
 
-            id = str(uuid.uuid4()) # todo
+            id = ID
+            prompt = cur_query_list[0]["content"]
             status = ""
+
+            if id == "":
+                id = str(uuid.uuid4()) # todo 
 
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
@@ -189,7 +193,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
                 time.sleep(10) # debug
                 r = requests.get("http://127.0.0.1:8888/jobs/" + id)
-                # print(r.json()) # debug
+                print(r.json()) # debug
                 status = r.json()["status"]
             
             response = r.json()["output"]
@@ -199,11 +203,12 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
             print("\n=== EXCEPTION ===\n", error)
 
-    # -- otherwise handle with baseline        
+    # -- otherwise handle with baseline
+
+    prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
 
     if response == None or response == "":
 
-        prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
         response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
 
     # -- update history and return results    
