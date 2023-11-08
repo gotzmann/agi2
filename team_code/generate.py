@@ -17,6 +17,7 @@ from imagebind.models.imagebind_model import ModalityType
 from .utils import get_query_from_input, get_text_emb
 
 ID = "" # todo
+PROMPT = "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!\n"
 
 # APP_PATH = "/Users/me/app/"
 APP_PATH = "/app/"
@@ -61,7 +62,7 @@ def gen_answer(model, tokenizer, query, history=None):
     out = out[:, 1:]
     generated_texts = tokenizer.batch_decode(out)
 
-    print("\n=== gen_answer ===\n", generated_texts[0])
+    print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
 
     return generated_texts[0]
 
@@ -173,10 +174,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     else:
         # If the current history is empty
         # it is assigned to the system prompt
-        PROMPT = "This is a dialog with AI assistant.\n"
+#        PROMPT = "This is a dialog with AI assistant.\n"
         prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
         history_tensor = prompt_embeddings
+
+    # debug
+     
+    print("\n\n=== tokenizer.batch_decode(history_tensor) ===\n\n") 
+    tokenizer.batch_decode(history_tensor)    
 
     # -- redirect simple text questions to LLaMAZoo
 
@@ -241,8 +247,8 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
     else:
         # If the current history is empty
         # it is assigned to the system prompt
-        PROMPT = "This is a dialog with AI assistant.\n"
-        prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+        prompt = "This is a dialog with AI assistant.\n" # todo
+        prompt_ids = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt").to(DEVICE)
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
         history_tensor = prompt_embeddings
 

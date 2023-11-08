@@ -25,15 +25,9 @@ models:
 #    prefix: "\n\nUSER:\n"
 #    suffix: "\n\nASSISTANT:"
 
-    preamble: |-
-      <<SYS>>
-        Today is ${DATE}.
-        You are the smart AI assistant.
-        Please read the task and answer the question.
-        Be short and precise!
-      <</SYS>>
-    prefix: "\n\n[INST] "
-    suffix: " [/INST]"    
+    preamble: "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!"
+    prefix: "\nUSER: "
+    suffix: "\nASSISTANT:"    
     
     contextsize: 4096
     predict: 512
