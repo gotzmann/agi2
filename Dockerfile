@@ -1,7 +1,9 @@
 # Ubuntu 20.04.6 LTS
 # Python 3.9.16
 
-FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
+# FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
+
+FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1
 
 USER root
 
