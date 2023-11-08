@@ -162,11 +162,14 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     # -- handle history
 
     if history_tensor is not None:
-
-        history_tensor = torch.concat(
-            [history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])],
-            dim=1,
-        )
+        try:
+            history_tensor = torch.concat(
+                [history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])],
+                dim=1,
+            )
+        except:
+            print("[ERR] Exception with history_tensor")
+              
     else:
         # If the current history is empty
         # it is assigned to the system prompt
