@@ -227,7 +227,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     # -- update history and return results    
 
  #   history_tensor = torch.concat([history_tensor, prompt], dim=1)
-    history_tensor = torch.Tensor([history_tensor, prompt]) # debug
+    tmp = [ history_tensor, prompt ]
+    history_tensor = torch.Tensor(tmp) # debug
 
     return response, history_tensor
 
