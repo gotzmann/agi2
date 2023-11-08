@@ -46,6 +46,9 @@ def get_query_from_input(model, tokenizer, input_list):
             query_embeddings = base_model.model.embed_tokens(query_ids)
             all_emb.append(query_embeddings)
 
+            print("\n === TEXT SIZE ===\n\n", all_emb.Size())
+            print("\n === TEXT EMB ===\n\n", all_emb)
+
         elif el["type"] == "image":
 
             modality_start_emb, modality_end_emb = img_tokens_emb
@@ -65,6 +68,9 @@ def get_query_from_input(model, tokenizer, input_list):
                     modality_end_emb[None, None].to(device=base_model.device, dtype=base_model.dtype),
                 ]
             )
+
+            print("\n === IMAGE SIZE ===\n\n", all_emb.Size())
+            print("\n === IMAGE EMB ===\n\n", all_emb)
 
         else:
 
@@ -86,13 +92,16 @@ def get_query_from_input(model, tokenizer, input_list):
                 ]
             )
 
+            print("\n === AUDIO SIZE ===\n\n", all_emb.Size())
+            print("\n === AUDIO EMB ===\n\n", all_emb)
+
         all_emb.append(ai_embeddings)
 
         embeddings = torch.cat(
             all_emb,
             dim=1,
         )
-        
+
     return embeddings
 
 

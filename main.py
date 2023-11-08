@@ -5,6 +5,10 @@ from team_code.generate import setup_model_and_tokenizer, generate_text
 
 dialog = [
     [
+        {"type": "image", "content": "00001.png"}, 
+        {"type": "text", "content": "What animal is on the picture?"}
+    ],
+    [
         {"type": "text", "content": "What is the largest ocean in the world?"}
     ], 
     [
@@ -16,10 +20,6 @@ dialog = [
     [
         {"type": "text", "content": "What animal made that sound??"}, 
         {"type": "audio", "content": "0000.wav"}
-    ],
-    [
-        {"type": "image", "content": "00001.png"}, 
-        {"type": "text", "content": "What animal is on the picture?"}
     ]
 ]
 
@@ -34,6 +34,7 @@ def main():
         print("\n => cur_query_list = ", query)
         response, history = generate_text(models, tokenizer, query, history)
         print("\n === RESPONSE ===\n\n", response)
+        print("\n === HISTORY SIZE ===\n\n", history.Size())
         print("\n === HISTORY ===\n\n", history)
 
     print("\n=== FINISH ===")
