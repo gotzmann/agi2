@@ -76,6 +76,8 @@ def imagebind_huge(pretrained=False):
     return model
 
 
+# --- SETUP ---
+
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
@@ -142,31 +144,12 @@ def setup_model_and_tokenizer():
         projection,
     ], tokenizer
 
+# --- GENERATE ---
 
 # Function that generates the responses for dialodues queries w.r.t. history.
 def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
-    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
-
-        id = str(uuid.uuid4())
-        status = ""
-
-        r = requests.post("http://127.0.0.1:8888/jobs", json={
-            "id": id,
-            "prompt": cur_query_list[0]["content"]
-        })
-
-        print(f"Status Code: {r.status_code}")
-
-        while r.status_code == 200 and status != "finished":
-
-            time.sleep(5) # debug
-            r = requests.get("http://127.0.0.1:8888/jobs/" + id)
-            print(r.json()) # debug
-            status = r.json()["status"]
-        
-        output = r.json()["output"]
-        print("\n\n=== OUT ===\n\n", output)
+    # -- handle history
 
     if history_tensor is not None:
         history_tensor = torch.concat(
@@ -181,13 +164,56 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
         history_tensor = prompt_embeddings
 
-    prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
+    # -- redirect simple text questions to LLaMAZoo
+
+    prompt = None
     response = None
-    response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+
+    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
+
+        prompt = cur_query_list[0]["content"]
+
+        try:
+
+            id = str(uuid.uuid4()) # todo
+            status = ""
+
+            r = requests.post("http://127.0.0.1:8888/jobs", json={
+                "id": id,
+                "prompt": prompt 
+            })
+
+            print(f"Status Code: {r.status_code}")
+
+            while r.status_code == 200 and status != "finished":
+
+                time.sleep(10) # debug
+                r = requests.get("http://127.0.0.1:8888/jobs/" + id)
+                # print(r.json()) # debug
+                status = r.json()["status"]
+            
+            response = r.json()["output"]
+            print("\n\n=== RESPONSE ===\n\n", response)
+
+        except Exception as error:
+
+            print("\n\n=== EXCEPTION ===\n\n", error)
+
+    # -- otherwise handle with baseline        
+
+    if response == None or response == "":
+
+        prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
+        response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+
+    # -- update history and return results    
 
     history_tensor = torch.concat([history_tensor, prompt], dim=1)
 
     return response, history_tensor
+
+
+# --- PPL ---
 
 def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
     if history_tensor is not None:
