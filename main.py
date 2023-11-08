@@ -35,6 +35,7 @@ def main():
 
     for query in dialog:
 
+        print("\n=====================================================================================\n")
         print("\n=== [ QUERY ] ===\n", query)
 
         if history != None:
