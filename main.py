@@ -6,21 +6,21 @@ from team_code.generate import setup_model_and_tokenizer, generate_text
 
 dialog = [
     [
-        {"type": "image", "content": "00001.png"}, 
-        {"type": "text", "content": "What animal is on the picture?"}
+        { "type": "image", "content": "00001.png" }, 
+        { "type": "text", "content": "What animal is on the picture?" }
     ],
     [
-        {"type": "text", "content": "What is the largest ocean in the world?"}
-    ], 
-    [
-        {"type": "text", "content": "How many continents does the Pacific Ocean border?"}
-    ], 
-    [
-        {"type": "text", "content": "Is it the oldest of all existing oceans?"}
+        { "type": "text", "content": "What animal made that sound??" }, 
+        { "type": "audio", "content": "00000.wav" }
     ],
     [
-        {"type": "text", "content": "What animal made that sound??"}, 
-        {"type": "audio", "content": "0000.wav"}
+        { "type": "text", "content": "What is the largest ocean in the world?" }
+    ], 
+    [
+        { "type": "text", "content": "How many continents does the Pacific Ocean border?" }
+    ], 
+    [
+        { "type": "text", "content": "Is it the oldest of all existing oceans?" }
     ]
 ]
 
