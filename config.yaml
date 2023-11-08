@@ -1,0 +1,55 @@
+id: "AGI"
+host: 0.0.0.0
+port: 8888
+log: llamazoo.log
+deadline: 600
+sessions:
+debug: cuda
+
+pods:
+
+  -
+    threads: 1
+    gpus: [ 100 ] # TODO: CUDA
+    model: default
+    batchsize: 512
+
+models:
+
+  -
+    id: default
+    name: Yet Another Model
+    path: model.gguf
+    
+#    preamble: "# Today ${DATE}. You are the smart AI assistant. Please read the task and answer the question."
+#    prefix: "\n\nUSER:\n"
+#    suffix: "\n\nASSISTANT:"
+
+    preamble: |-
+      <<SYS>>
+        Today is ${DATE}.
+        You are the smart AI assistant.
+        Please read the task and answer the question.
+        Be short and precise!
+      <</SYS>>
+    prefix: "\n\n[INST] "
+    suffix: " [/INST]"    
+    
+    contextsize: 4096
+    predict: 512
+    
+    janus: 1
+    depth: 200
+    scale: 0.97
+    hi: 0.99
+    lo: 0.97
+    
+    temp: 0.8
+    topk: 8
+    topp: 0.9
+    typicalp: 1.0
+    penaltyrepeat: 1.1
+    penaltylastn: 200
+    mirostat: 0
+    mirostatent: 3.0
+    mirostatlr: 0.1

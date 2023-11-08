@@ -1,0 +1,2 @@
+team_code/ckpts/projection_LLaMa-7b-EN-Linear-ImageBind filter=lfs diff=lfs merge=lfs -binary
+*.psd filter=lfs diff=lfs merge=lfs -text
