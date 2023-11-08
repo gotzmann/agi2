@@ -1,4 +1,5 @@
-# from team_code.utils import get_query_from_input, get_text_emb
+import torch
+
 from team_code.generate import setup_model_and_tokenizer, generate_text
 
 # --- MAIN ---
@@ -34,7 +35,8 @@ def main():
 
     for query in dialog:
         print("\n => cur_query_list = ", query)
-        response, history = generate_text(models, tokenizer, query, (history, response))
+        tmp = (history, response)
+        response, history = generate_text(models, tokenizer, query, torch.tensor(tmp))
         print("\n === RESPONSE ===\n\n", response)
         print("\n === HISTORY SIZE ===\n\n", history.Size())
         print("\n === HISTORY ===\n\n", history)
