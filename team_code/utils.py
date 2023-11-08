@@ -46,7 +46,7 @@ def get_query_from_input(model, tokenizer, input_list):
             query_embeddings = base_model.model.embed_tokens(query_ids)
             all_emb.append(query_embeddings)
 
-            print("\n === TEXT SIZE ===\n\n", all_emb.Size())
+            print("\n === TEXT SIZE ===\n\n", len(all_emb))
             print("\n === TEXT EMB ===\n\n", all_emb)
 
         elif el["type"] == "image":
@@ -69,7 +69,7 @@ def get_query_from_input(model, tokenizer, input_list):
                 ]
             )
 
-            print("\n === IMAGE SIZE ===\n\n", all_emb.Size())
+            print("\n === IMAGE SIZE ===\n\n", len(all_emb))
             print("\n === IMAGE EMB ===\n\n", all_emb)
 
         else:
@@ -92,7 +92,7 @@ def get_query_from_input(model, tokenizer, input_list):
                 ]
             )
 
-            print("\n === AUDIO SIZE ===\n\n", all_emb.Size())
+            print("\n === AUDIO SIZE ===\n\n", len(all_emb))
             print("\n === AUDIO EMB ===\n\n", all_emb)
 
         all_emb.append(ai_embeddings)
