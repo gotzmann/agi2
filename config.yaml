@@ -1,7 +1,7 @@
 id: "AGI"
 host: 0.0.0.0
 port: 8888
-log: llamazoo.log
+log: /app/llamazoo.log
 deadline: 600
 sessions:
 debug: cuda
@@ -19,7 +19,7 @@ models:
   -
     id: default
     name: Yet Another Model
-    path: model.gguf
+    path: /app/model.gguf
     
 #    preamble: "# Today ${DATE}. You are the smart AI assistant. Please read the task and answer the question."
 #    prefix: "\n\nUSER:\n"
