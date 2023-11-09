@@ -1,5 +1,6 @@
 requests
 uuid
+sentencepiece
 jsonlines
 typing
 datetime==5.2
