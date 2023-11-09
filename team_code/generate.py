@@ -186,7 +186,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         ], "")
 
     else:
-        print("\n === GET TEXT HISTORY ===\n", history_tensor) # debug
+        # print("\n === GET TEXT HISTORY ===\n", history_tensor) # debug
         num = len(history_tensor[0])
         embd = torch.concat(
             [
@@ -287,7 +287,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
 def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
 
-    print("\n === PPL HISTORY ===\n", history_tensor) # debug
+    # print("\n === PPL HISTORY ===\n", history_tensor) # debug
 
     if history_tensor is None:
 
