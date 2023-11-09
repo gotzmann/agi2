@@ -24,6 +24,7 @@
 # MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
 # MLSPACE_IMAGE_NAME=cuda11.7-torch2
 FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
+USER root
 
 COPY model.gguf /app/model.gguf
 COPY imagebind_huge.pth /app/imagebind_huge.pth
@@ -73,5 +74,5 @@ COPY llamazoo           /app/llamazoo
 # DEBUG
 # ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
 
-#USER jovyan
-#WORKDIR /home/jovyan
+# USER jovyan
+# WORKDIR /home/jovyan
