@@ -51,9 +51,9 @@ gen_params = {
 
 @torch.no_grad()
 def gen_answer(model, tokenizer, query, history=None):
-
-    query = torch.cat([history, query], dim=1)
-
+    num = len(history)
+    # query = torch.cat([history, query], dim=1)
+    query = torch.cat([history[num-1].embd, query], dim=1)
 #    print("\n\n=== gen_answer :: query ===\n\n", query)
 
     out = model.generate(
@@ -62,14 +62,11 @@ def gen_answer(model, tokenizer, query, history=None):
     )
 
 #    print("\n\n=== gen_answer :: out 1 ===\n\n", out)
-    # remove BOS token
-    out = out[:, 1:]
+    out = out[:, 1:] # remove BOS token
 #    print("\n\n=== gen_answer :: out 2 ===\n\n", out)
 
     generated_texts = tokenizer.batch_decode(out)
-
 #    print("\n\n=== gen_answer :: generated_texts ===\n\n", generated_texts)
-
     return generated_texts[0]
 
 # --
