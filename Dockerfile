@@ -1,3 +1,9 @@
+# FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
+
+# MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
+# MLSPACE_IMAGE_NAME=cuda11.7-torch2
+FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
+
 # Ubuntu 20.04.6 LTS
 # Python 3.9.16
 
@@ -26,11 +32,6 @@
 # -- Show and kill processes using GPU
 # lsof | grep /dev/nvidia
 
-# FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
-
-# MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
-# MLSPACE_IMAGE_NAME=cuda11.7-torch2
-FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
 USER root
 WORKDIR /app
 
@@ -65,9 +66,9 @@ RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-FROM base
-USER root
-WORKDIR /app
+# FROM base
+# USER root
+# WORKDIR /app
 
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
 
