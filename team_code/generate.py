@@ -250,7 +250,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
                 time.sleep(10) # debug
                 r = requests.get("http://127.0.0.1:8888/jobs/" + id)
-                print(r.json()) # debug
+                # print(r.json()) # debug
                 status = r.json()["status"]
             
             response = r.json()["output"]
