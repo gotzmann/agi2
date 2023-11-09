@@ -45,7 +45,7 @@ answers = [
 
 def main():
 
-    print("\n=== START ===")
+    print("\n=== [ START ] ===")
 
     models, tokenizer = setup_model_and_tokenizer()
 
@@ -72,7 +72,7 @@ def main():
 
             num = num + 1
 
-    print("\n=== FINISH ===")
+    print("\n=== [ FINISH ] ===")
 
 if __name__ == "__main__":
     main()
