@@ -9,10 +9,10 @@ debug: cuda
 pods:
 
   -
-    threads: 1
-    gpus: [ 100 ]
+    threads: 16
+    gpus: [ 0 ]
     model: default
-    batchsize: 512
+    batchsize: 256
 
 models:
 
@@ -35,7 +35,7 @@ models:
 #    suffix: ""
     
     contextsize: 4096
-    predict: 512
+    predict: 256
     
     janus: 1
     depth: 200
