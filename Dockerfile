@@ -54,8 +54,8 @@ RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
 #     cp llamazoo /app/llamazoo && \
 #     chmod +x /app/llamazoo
 
-RUN mkdir /app/git & \
-    cd /app/git & \
+RUN mkdir -p /app/git && \
+    cd /app/git && \
     git clone https://github.com/gotzmann/llamazoo.git && \
     cd ./llamazoo && \
     PATH=$PATH:/usr/local/go/bin make -j llamazoo && \
