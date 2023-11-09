@@ -16,7 +16,7 @@ from imagebind.models.imagebind_model import ModalityType
 
 from .utils import get_query_from_input, get_text_emb
 
-#ID = "" # todo
+DEBUG = False
 PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
 
 # APP_PATH = "/Users/me/app/"
@@ -267,7 +267,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 print("\n=== JSON EXCEPTION ===\n", error)
 
             history_tensor[0][num]["response"] = response
-            print("\n=== LLAMAZOO RESPONSE ===\n", response)
+            if DEBUG:
+                print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
         except Exception as error:
             print("\n=== EXCEPTION ===\n", error)
@@ -276,7 +277,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
     baselineResponse = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
-    print("\n=== BASELINE RESPONSE ===\n", baselineResponse)
+    if DEBUG:
+        print("\n=== BASELINE RESPONSE ===\n", baselineResponse)
 
     if response is None or response == "":
         response = baselineResponse
