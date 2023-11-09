@@ -1,8 +1,5 @@
-# FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
-
-# MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
-# MLSPACE_IMAGE_NAME=cuda11.7-torch2
-FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
+# FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
+FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
 USER root
 WORKDIR /app
 
@@ -10,10 +7,10 @@ WORKDIR /app
 # Python 3.9.16
 
 # -- Build, tag, push and run image
-# sudo docker build --tag supermachina:0.5 .
-# sudo docker tag supermachina:0.5 cr.msk.sbercloud.ru/aijcontest/supermachina:0.5
-# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.5
-# sudo docker run --rm -it supermachina:0.5 -- sh
+# sudo docker build --tag supermachina:0.6 .
+# sudo docker tag supermachina:0.6 cr.msk.sbercloud.ru/aijcontest/supermachina:0.6
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.6
+# sudo docker run --rm -it supermachina:0.6 -- sh
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
@@ -40,8 +37,8 @@ WORKDIR /app
 
 COPY model.gguf /app/model.gguf
 COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
-# COPY imagebind_huge.pth /app/imagebind_huge.pth
-# COPY imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
+COPY .checkpoints/imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
+COPY ./Llama-2-7B-fp16 /app/Llama-2-7B-fp16
 
 RUN apt update -y && \
     apt upgrade -y && \
