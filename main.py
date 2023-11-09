@@ -50,10 +50,13 @@ dialog = [
 
 answers = [
     "The Pacific Ocean is the largest and deepest of the world ocean basins.",
-    "There are three pears and one red apple on the picture.",
+    "There are three pears on the picture.",
+    "There is one red apple on the picture.",
+    "Yes, I know how kittens meow.",
     "That is the dog barking.",
     "Pacific Ocean border four continents in total.",
-    "Yes, it's the oldest ocean."
+    "Yes, it is the oldest ocean.",
+    "There are nothing similar between friuts on the table and dog barking."
 ]
 
 def main():
