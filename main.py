@@ -66,7 +66,7 @@ def main():
 
             print("\n=== [ RESPONSE ] ===\n", response)
             # print("\n === HISTORY SIZE ===\n", len(history))
-            print("\n === HISTORY ===\n", history)
+            print("\n === HISTORY ===\n", (history, response))
 
             print("\n=== [ PPL ] ===", ppl[0], "===")
 
