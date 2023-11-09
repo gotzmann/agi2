@@ -1,6 +1,9 @@
 # Ubuntu 20.04.6 LTS
 # Python 3.9.16
 
+# sudo docker system df
+# sudo docker builder prune
+
 # FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
 
 # MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
