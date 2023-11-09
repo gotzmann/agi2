@@ -68,21 +68,31 @@ RUN mkdir -p /app/git && \
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
 
-RUN pip install requests
-RUN pip install sentencepiece
-RUN pip install https://github.com/enthought/mayavi/zipball/master
-RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
+#RUN pip install requests
+#RUN pip install sentencepiece
+#RUN pip install https://github.com/enthought/mayavi/zipball/master
+#RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 
-# -- See standard Python libs: https://docs.python.org/3/library/index.html
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# RUN pip install --no-cache-dir -r /app/requirements.txt
 
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
 # COPY --from=base /app/model.gguf /app/model.gguf
 # COPY --from=base /app/imagebind_huge.pth /app/imagebind_huge.pth
 # COPY --from=base /app/projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
+RUN /bin/bash -cu pip install requests # buildkit
+RUN /bin/bash -cu pip install sentencepiece # buildkit
+RUN /bin/bash -cu pip install https://github.com/enthought/mayavi/zipball/master # buildkit
+RUN /bin/bash -cu pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo # buildkit
+RUN /bin/bash -cu pip install protobuf==3.20.0 # buildkit
+RUN /bin/bash -cu pip install -U transformers # buildkit
+RUN /bin/bash -cu pip install peft==0.4.0 # buildkit
+
+# -- See standard Python libs: https://docs.python.org/3/library/index.html
+COPY requirements.txt /app/requirements.txt
+RUN /bin/bash -cu pip install --no-cache-dir -r /app/requirements.txt # buildkit
+
 COPY config.yaml /app/config.yaml
 
-# USER jovyan
-# WORKDIR /home/jovyan
+USER jovyan
+WORKDIR /home/jovyan
