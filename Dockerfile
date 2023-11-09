@@ -25,6 +25,7 @@
 # MLSPACE_IMAGE_NAME=cuda11.7-torch2
 FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
 USER root
+WORKDIR /app
 
 COPY model.gguf /app/model.gguf
 COPY imagebind_huge.pth /app/imagebind_huge.pth
@@ -53,9 +54,10 @@ COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-
 # RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 # RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
 # RUN pip install requests
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 FROM base
 USER root
