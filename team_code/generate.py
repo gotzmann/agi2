@@ -51,9 +51,9 @@ gen_params = {
 
 @torch.no_grad()
 def gen_answer(model, tokenizer, query, history=None):
-    num = len(history)
+    num = len(history[0])
     # query = torch.cat([history, query], dim=1)
-    query = torch.cat([history[num-1]["embd"], query], dim=1)
+    query = torch.cat([history[0][num-1]["embd"], query], dim=1)
 #    print("\n\n=== gen_answer :: query ===\n\n", query)
 
     out = model.generate(
@@ -175,24 +175,24 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         # history_tensor = prompt_embeddings
 # debug        history_tensor = get_text_emb(model[0], tokenizer, PROMPT)
         # debug
-        history_tensor = [
+        history_tensor = ([
             {
                 "id": "",
                 "prompt": "",
                 "response": "",
                 "embd": prompt_embeddings
             }
-        ]
+        ], "")
 
     else:
         print("\n === HISTORY ===\n", history_tensor) # debug
-        num = len(history_tensor)
+        num = len(history_tensor[0])
         embd = torch.concat(
             [
-                history_tensor[num-1]["embd"], 
-                get_text_emb(model[0], tokenizer, history_tensor[num-1]["response"])
+                history_tensor[0][num-1]["embd"], 
+                get_text_emb(model[0], tokenizer, history_tensor[1])
             ], dim=1)
-        history_tensor.append(
+        history_tensor[0].append(
             {
                 "id": "",
                 "prompt": "",
@@ -222,19 +222,19 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     for part in cur_query_list:
         if part["type"] == "text":
             prompt = part["content"]
-            history_tensor[num]["prompt"] = prompt
+            history_tensor[0][num]["prompt"] = prompt
 
     if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
 
         try:
 
             # let store session ID as first history element
-            id = history_tensor[0]["id"]
+            id = history_tensor[0][0]["id"]
             if id == "":
                 id = str(uuid.uuid4())
-                history_tensor[0]["id"] = id
-            if history_tensor[num]["id"] == "":
-                history_tensor[num]["id"] = id
+                history_tensor[0][0]["id"] = id
+            if history_tensor[0][num]["id"] == "":
+                history_tensor[0][num]["id"] = id
 
             #prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
             #if history_tensor is None: # fixme
@@ -256,7 +256,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 status = r.json()["status"]
             
             response = r.json()["output"]
-            history_tensor[num]["response"] = response
+            history_tensor[0][num]["response"] = response
             print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
         except Exception as error:
@@ -274,10 +274,10 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     # -- update history and return results  
 
-    history_tensor[num]["response"] = response  
+    history_tensor[0][num]["response"] = response  
 
     #history_tensor = torch.concat([history_tensor, prompt], dim=1)
-    history_tensor[num]["embd"] = torch.concat([history_tensor[num]["embd"], prompt], dim=1)
+    history_tensor[0][num]["embd"] = torch.concat([history_tensor[0][num]["embd"], prompt], dim=1)
 
     return response, history_tensor
 
@@ -295,9 +295,9 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
         history_tensor = prompt_embeddings
         
     else:
-        num = len(history_tensor)
+        num = len(history_tensor[0])
         #history_tensor = torch.concat([history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
-        history_tensor = torch.concat([history_tensor[num-1]["embd"], get_text_emb(model[0], tokenizer, history_tensor[num-1]["response"])], dim=1)
+        history_tensor = torch.concat([history_tensor[0][num-1]["embd"], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
 
     current_query = get_query_from_input(model, tokenizer, cur_query_tuple[0])
     current_answer = get_text_emb(model[0], tokenizer, cur_query_tuple[1])
