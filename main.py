@@ -81,7 +81,7 @@ def main():
 
             print("\n=== [ RESPONSE ] ===\n", response)
             print("\n=== [ PPL ] ===", ppl[0], "===")
-            # print("\n === HISTORY ===\n", history)
+            print("\n === HISTORY ===\n", history)
 
             num = num + 1
 
