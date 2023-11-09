@@ -185,6 +185,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         ]
 
     else:
+        print("\n === HISTORY ===\n", history) # debug
         num = len(history_tensor)
         embd = torch.concat(
             [
