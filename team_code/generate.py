@@ -96,13 +96,23 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
+    workdir = os.getcwd()
+    # print("\nWORKDIR = ", workdir)
+
+    configPath = APP_PATH + "config.yaml"
+    freshConfig = workdir + "/config.yaml"
+    if os.path.exists(freshConfig):
+        configPath = freshConfig 
+
     # todo: allow re-entrant
 
     # debug
     print("\nStarting LLaMAZoo... ", APP_PATH + "llamazoo")
     llamazoo = subprocess.Popen([
-        APP_PATH + "llamazoo", 
-        "--server"
+            APP_PATH + "llamazoo", 
+            "--server",
+            "--config",
+            configPath,
         ], 
         stdout=subprocess.PIPE, 
         stderr=subprocess.PIPE)
@@ -125,9 +135,6 @@ def setup_model_and_tokenizer():
     ENC_DIM = model_imagebind.modality_heads[ModalityType.VISION][-1].out_features
 
     projection = nn.Linear(ENC_DIM, N_MODALITY_EMBS * EMB_DIM).to(device=model.device, dtype=model.dtype).eval()
-    workdir = os.getcwd()
-
-    print("\nWORKDIR = ", workdir)
 
     img_tokens_emb = None
     img_tokens_emb = torch.load(
