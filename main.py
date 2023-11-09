@@ -2,6 +2,9 @@ import torch
 
 from team_code.generate import setup_model_and_tokenizer, generate_text, get_ppl
 
+# Reset GPU: nvidia-smi --gpu-reset
+# Find and kill processes: lsof | grep /dev/nvidia
+
 # --- MAIN ---
 
 dialog = [
