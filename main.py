@@ -15,13 +15,19 @@ dialog = [
     ],
     [
         [
-            { "type": "image", "content": "00001.png" }, 
-            { "type": "text", "content": "How many pears and apples are there in the picture?" }
+            { "type": "image", "content": "00001.png" },
+            { "type": "text", "content": "How many pears are there on the picture?" }
+        ],
+        [
+            { "type": "text", "content": "How many apples are there on the picture shown before?" }
         ]
     ],
     [
         [
-            { "type": "text", "content": "What animal made that sound??" }, 
+            { "type": "text", "content": "Do you know how kittens meow?" }, 
+        ],
+        [
+            { "type": "text", "content": "What animal made that sound?" }, 
             { "type": "audio", "content": "00000.wav" }
         ]
     ],
@@ -32,6 +38,13 @@ dialog = [
         [
             { "type": "text", "content": "Is it the oldest of all existing oceans?" }
         ]
+    ],
+    [
+        [
+            { "type": "text", "content": "What common between those picture and sounds?" }, 
+            { "type": "image", "content": "00001.png" },
+            { "type": "audio", "content": "00000.wav" }
+        ]   
     ]
 ]
 

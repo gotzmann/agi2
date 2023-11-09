@@ -235,7 +235,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             prompt = part["content"]
             history_tensor[0][num]["prompt"] = prompt
 
-    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
+    # -- Generate answer with 70B model only if there is just TEXT modality and there no multi-modal history
+    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and history_tensor[0][num-1]["id"] != "":
 
         try:
 
@@ -244,8 +245,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             if id == "":
                 id = str(uuid.uuid4())
                 history_tensor[0][0]["id"] = id
-            # if history_tensor[0][num]["id"] == "":
-            #    history_tensor[0][num]["id"] = id
+            history_tensor[0][num]["id"] == id
 
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
