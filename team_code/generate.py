@@ -18,14 +18,10 @@ from .utils import get_query_from_input, get_text_emb
 
 DEBUG = False # True
 PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
-
-# APP_PATH = "/Users/me/app/"
 APP_PATH = "/app/"
-
 DEVICE = torch.device("cuda:0")
-# DEVICE = torch.device("cpu")
 
-#DIALOGUE_DICT = {}
+DIALOGUE_DICT = {}
 
 # bad_words_ids = tokenizer(["\nUser: ", "\n Bot:",], add_special_tokens=False).input_ids
 bad_words_ids = [
@@ -96,7 +92,7 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
-    print("\n=== SuperMachina v0.4 ===\n")
+    print("\n=== SuperMachina v0.5 ===\n")
 
     workdir = os.getcwd()
     # print("\nWORKDIR = ", workdir)
@@ -189,6 +185,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         history_tensor = ([
             {
                 "id": "",
+                "session": "",
                 "prompt": "",
                 "response": "",
                 "embd": prompt_embeddings
@@ -206,6 +203,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         history_tensor[0].append(
             {
                 "id": "",
+                "session": "",
                 "prompt": "",
                 "response": "",
                 "embd": embd
@@ -235,20 +233,24 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             prompt = part["content"]
             history_tensor[0][num]["prompt"] = prompt
 
-    # -- Generate answer with 70B model only if there is just TEXT modality and there no multi-modal history
-    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and (num == 0 or history_tensor[0][num-1]["id"] != ""):
+    # -- Generate answer with 70B model only if:
+    #    1) query consist only of one text question and 
+    #    2) there is no multi-modal history
+
+    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and (num == 0 or history_tensor[0][num-1]["session"] != ""):
 
         try:
 
-            # let store session ID as first history element
-            id = history_tensor[0][0]["id"]
-            if id == "":
-                id = str(uuid.uuid4())
-                history_tensor[0][0]["id"] = id
-            history_tensor[0][num]["id"] == id
+            id = str(uuid.uuid4())
+            session = str(uuid.uuid4())
+            if num != 0:
+                session = history_tensor[0][num-1]["session"]
+            history_tensor[0][num]["id"] = id
+            history_tensor[0][num]["session"] = session
 
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
+                "session": session,
                 "prompt": prompt 
             })
 

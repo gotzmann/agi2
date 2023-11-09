@@ -10,10 +10,10 @@ WORKDIR /app
 # Python 3.9.16
 
 # -- Build, tag, push and run image
-# sudo docker build --tag supermachina:0.4 .
-# sudo docker tag supermachina:0.4 cr.msk.sbercloud.ru/aijcontest/supermachina:0.4
-# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.4
-# sudo docker run --rm -it supermachina:0.4 -- sh
+# sudo docker build --tag supermachina:0.5 .
+# sudo docker tag supermachina:0.5 cr.msk.sbercloud.ru/aijcontest/supermachina:0.5
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.5
+# sudo docker run --rm -it supermachina:0.5 -- sh
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
@@ -28,6 +28,9 @@ WORKDIR /app
 
 # -- Show TOP 20 biggest files and folders
 # sudo du -ah / | sort -rh | head -n 20
+
+# -- Show which process occupied some local port
+# sudo lsof -i:8888 -P -n | grep LISTEN
 
 # -- Reset GPU
 # nvidia-smi --gpu-reset
@@ -65,31 +68,21 @@ RUN mkdir -p /app/git && \
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
 
-# RUN pip install https://github.com/enthought/mayavi/zipball/master
-# RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
-# RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install requests
+RUN pip install sentencepiece
+RUN pip install https://github.com/enthought/mayavi/zipball/master
+RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 
 # -- See standard Python libs: https://docs.python.org/3/library/index.html
-# RUN pip install requests
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# FROM base
-# USER root
-# WORKDIR /app
-
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
-
 # COPY --from=base /app/model.gguf /app/model.gguf
 # COPY --from=base /app/imagebind_huge.pth /app/imagebind_huge.pth
 # COPY --from=base /app/projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
-COPY config.yaml        /app/config.yaml
-# COPY llamazoo           /app/llamazoo
-# RUN chmod +x            /app/llamazoo
+COPY config.yaml /app/config.yaml
 
-# DEBUG
-# ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
-
-# USER jovyan
-# WORKDIR /home/jovyan
+USER jovyan
+WORKDIR /home/jovyan

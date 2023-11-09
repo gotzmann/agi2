@@ -5,8 +5,6 @@ from imagebind import data
 from imagebind.models.imagebind_model import ModalityType
 
 DEVICE = "cuda:0"
-# DEVICE = "cpu"
-
 EMB_DIM = 4096
 N_MODALITY_EMBS = 32
 
