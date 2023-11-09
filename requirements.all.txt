@@ -1,5 +1,4 @@
 requests
-uuid
 jsonlines
 typing
 datetime==5.2

@@ -85,8 +85,8 @@ def imagebind_huge(pretrained=False):
     )
 
     if pretrained:
-        # model.load_state_dict(torch.load(APP_PATH+ ".checkpoints/imagebind_huge.pth"))
-        model.load_state_dict(torch.load(APP_PATH + "imagebind_huge.pth"))
+        model.load_state_dict(torch.load(APP_PATH+ ".checkpoints/imagebind_huge.pth"))
+        #model.load_state_dict(torch.load(APP_PATH + ".checkpoints/imagebind_huge.pth"))
 
     return model
 
@@ -96,7 +96,7 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
-    print("\n=== SuperMachina v0.2 ===\n")
+    print("\n=== SuperMachina v0.3 ===\n")
 
     workdir = os.getcwd()
     # print("\nWORKDIR = ", workdir)

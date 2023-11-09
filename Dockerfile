@@ -2,9 +2,9 @@
 # Python 3.9.16
 
 # -- Build, tag and push image
-# sudo docker build --tag supermachina:0.2 .
-# sudo docker tag supermachina:0.1 cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
-# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
+# sudo docker build --tag supermachina:0.3 .
+# sudo docker tag supermachina:0.3 cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
@@ -35,15 +35,16 @@ USER root
 WORKDIR /app
 
 COPY model.gguf /app/model.gguf
-COPY imagebind_huge.pth /app/imagebind_huge.pth
+# COPY imagebind_huge.pth /app/imagebind_huge.pth
+# COPY imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
 COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
-# RUN apt update -y && \
-#     apt upgrade -y && \
-#     apt install -y mc nano git htop lsof make build-essential
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends mc nano git htop lsof make build-essential python3-pip
 
-# RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
-#     tar -xf go1.20.linux-amd64.tar.gz -C /usr/local
+RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
+    tar -xf go1.20.linux-amd64.tar.gz -C /usr/local
 
 # RUN git clone https://github.com/gotzmann/llamazoo.git && \
 #     cd ./llamazoo && \
@@ -55,14 +56,11 @@ COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
 
-
-
 # RUN pip install https://github.com/enthought/mayavi/zipball/master
 # RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 # RUN pip install --no-cache-dir -r requirements.txt
 
 # -- See standard Python libs: https://docs.python.org/3/library/index.html
-RUN apt update && apt install -y --no-install-recommends python3-pip
 # RUN pip install requests
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
