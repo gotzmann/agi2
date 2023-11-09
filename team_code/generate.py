@@ -96,6 +96,8 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
+    print("\n\n=== SuperMachina v0.1 ===\n\n")
+
     workdir = os.getcwd()
     # print("\nWORKDIR = ", workdir)
 
@@ -105,8 +107,9 @@ def setup_model_and_tokenizer():
         configPath = freshConfig 
 
     # todo: allow re-entrant
+    # Reset GPU: nvidia-smi --gpu-reset
+    # Find and kill processes: lsof | grep /dev/nvidia
 
-    # debug
     print("\nStarting LLaMAZoo... ", APP_PATH + "llamazoo --config", configPath)
     llamazoo = subprocess.Popen([
             APP_PATH + "llamazoo", 
@@ -118,7 +121,7 @@ def setup_model_and_tokenizer():
         stderr=subprocess.PIPE)
 
     print("\nWaiting for a minute...")
-#    time.sleep(10) # debug
+    time.sleep(60) # debug
 
     tokenizer = None
     model = None
