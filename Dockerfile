@@ -77,17 +77,17 @@ RUN mkdir -p /app/git && \
 # COPY --from=base /app/imagebind_huge.pth /app/imagebind_huge.pth
 # COPY --from=base /app/projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
-RUN /bin/bash -cu pip install requests # buildkit
-RUN /bin/bash -cu pip install sentencepiece # buildkit
-RUN /bin/bash -cu pip install https://github.com/enthought/mayavi/zipball/master # buildkit
-RUN /bin/bash -cu pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo # buildkit
-RUN /bin/bash -cu pip install protobuf==3.20.0 # buildkit
-RUN /bin/bash -cu pip install -U transformers # buildkit
-RUN /bin/bash -cu pip install peft==0.4.0 # buildkit
+RUN pip install requests
+RUN pip install sentencepiece
+RUN pip install https://github.com/enthought/mayavi/zipball/master
+RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
+RUN pip install protobuf==3.20.0
+RUN pip install -U transformers
+RUN pip install peft==0.4.0
 
 # -- See standard Python libs: https://docs.python.org/3/library/index.html
 COPY requirements.txt /app/requirements.txt
-RUN /bin/bash -cu pip install --no-cache-dir -r /app/requirements.txt # buildkit
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY config.yaml /app/config.yaml
 

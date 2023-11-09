@@ -1,7 +1,7 @@
 requests
-uuid
 sentencepiece
 jsonlines
+numpy
 typing
 datetime==5.2
 huggingface_hub==0.16.4
