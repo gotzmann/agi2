@@ -25,13 +25,13 @@ models:
 #    prefix: "\n\nUSER:\n"
 #    suffix: "\n\nASSISTANT:"
 
-#    preamble: "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!"
-#    prefix: "\nUSER: "
-#    suffix: "\nASSISTANT:"
+    preamble: "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!"
+    prefix: "\nUSER: "
+    suffix: "\nASSISTANT:"
 
-    preamble: ""
-    prefix: ""
-    suffix: ""
+#    preamble: ""
+#    prefix: ""
+#    suffix: ""
     
     contextsize: 4096
     predict: 512

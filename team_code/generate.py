@@ -16,7 +16,7 @@ from imagebind.models.imagebind_model import ModalityType
 
 from .utils import get_query_from_input, get_text_emb
 
-ID = "" # todo
+#ID = "" # todo
 PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
 
 # APP_PATH = "/Users/me/app/"
@@ -166,6 +166,8 @@ def setup_model_and_tokenizer():
 # Function that generates the responses for dialodues queries w.r.t. history.
 def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
+    num = 0 # number of current iteration in history
+
     # -- handle history
 
     # If the current history is empty - it is assigned to the system prompt
@@ -173,15 +175,39 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 #        PROMPT = "This is a dialog with AI assistant.\n"
         prompt_ids = tokenizer.encode(PROMPT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
-        history_tensor = prompt_embeddings
+        # history_tensor = prompt_embeddings
 # debug        history_tensor = get_text_emb(model[0], tokenizer, PROMPT)
+        # debug
+        history_tensor = [
+            {
+                "id": "",
+                "embd": prompt_embeddings,
+                "prompt": "",
+                "response": "",
+            }
+        ]
+
     else:
-#        try:
-        history_tensor = torch.concat(
+        num = len(history_tensor)
+        embd = torch.concat(
             [
-                history_tensor[0], 
-                get_text_emb(model[0], tokenizer, history_tensor[1])
+                history_tensor[num-1].embd, 
+                get_text_emb(model[0], tokenizer, history_tensor[num-1].response)
             ], dim=1)
+        history_tensor.append(
+            {
+                "id": "",
+                "embd": embd,
+                "prompt": "",
+                "response": "",
+            })
+#        try:
+        #history_tensor = torch.concat(
+        #    [
+        #        history_tensor[0], 
+        #        get_text_emb(model[0], tokenizer, history_tensor[1])
+        #    ], dim=1)
+
 #        except Exception as error:
 #            print("\n=== [ERR] === Exception with history_tensor ===\n", error)
 
@@ -199,17 +225,19 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
         try:
 
-            id = ID
+            if num == 0:
+                id = str(uuid.uuid4())
+                history_tensor[num].id = id
+
             prompt = cur_query_list[0]["content"]
+            history_tensor[num].prompt = prompt
+
             status = ""
 
-            if id == "":
-                id = str(uuid.uuid4()) # todo
+            #prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
 
-            prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
-
-            if history_tensor is None: # fixme
-                prompt = PROMPT + prompt
+            #if history_tensor is None: # fixme
+            #    prompt = PROMPT + prompt
 
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
@@ -226,6 +254,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 status = r.json()["status"]
             
             response = r.json()["output"]
+            history_tensor[num].response = response
             print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
         except Exception as error:
@@ -236,14 +265,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
 
-    # if response == None or response == "":
-
-    response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
-    print("\n=== BASELINE RESPONSE ===\n", response)
+    if response is None or response == "":
+        response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+        history_tensor[num].response = response
+        print("\n=== BASELINE RESPONSE ===\n", response)
 
     # -- update history and return results    
 
-    history_tensor = torch.concat([history_tensor, prompt], dim=1)
+    #history_tensor = torch.concat([history_tensor, prompt], dim=1)
+    history_tensor[num].embd = torch.concat([history_tensor[num].embd, prompt], dim=1)
 
     return response, history_tensor
 
@@ -251,15 +281,19 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 # --- PPL ---
 
 def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
-    if history_tensor is not None:
-        history_tensor = torch.concat([history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
-    else:
-        # If the current history is empty
-        # it is assigned to the system prompt
+
+    if history_tensor is None:
+
+        # If the current history is empty - it is assigned to the system prompt
         prompt = "This is a dialog with AI assistant.\n" # todo
         prompt_ids = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt").to(DEVICE)
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
         history_tensor = prompt_embeddings
+        
+    else:
+        num = len(history_tensor)
+        #history_tensor = torch.concat([history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
+        history_tensor = torch.concat([history_tensor[num-1].embd, get_text_emb(model[0], tokenizer, history_tensor[num-1].response)], dim=1)
 
     current_query = get_query_from_input(model, tokenizer, cur_query_tuple[0])
     current_answer = get_text_emb(model[0], tokenizer, cur_query_tuple[1])

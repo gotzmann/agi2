@@ -1,27 +1,44 @@
 import torch
 
-from team_code.generate import setup_model_and_tokenizer, generate_text
+from team_code.generate import setup_model_and_tokenizer, generate_text, get_ppl
 
 # --- MAIN ---
 
 dialog = [
     [
-        { "type": "image", "content": "00001.png" }, 
-        { "type": "text", "content": "What animal is on the picture?" }
+        [
+            { "type": "text", "content": "What is the largest ocean in the world?" }
+        ]
     ],
     [
-        { "type": "text", "content": "What animal made that sound??" }, 
-        { "type": "audio", "content": "00000.wav" }
+        [
+            { "type": "image", "content": "00001.png" }, 
+            #{ "type": "text", "content": "What animal is on the picture?" }
+            { "type": "text", "content": "How many apples are on the picture?" }
+        ]
     ],
     [
-        { "type": "text", "content": "What is the largest ocean in the world?" }
-    ], 
+        [
+            { "type": "text", "content": "What animal made that sound??" }, 
+            { "type": "audio", "content": "00000.wav" }
+        ]
+    ],
     [
-        { "type": "text", "content": "How many continents does the Pacific Ocean border?" }
-    ], 
-    [
-        { "type": "text", "content": "Is it the oldest of all existing oceans?" }
+        [
+            { "type": "text", "content": "How many continents does the Pacific Ocean border?" }
+        ], 
+        [
+            { "type": "text", "content": "Is it the oldest of all existing oceans?" }
+        ]
     ]
+]
+
+answers = [
+    "The Pacific Ocean is the largest and deepest of the world ocean basins.",
+    "There is one red apple on the picture.",
+    "That is the dog barking.",
+    "Pacific Ocean border four continents in total.",
+    "Yes, it's the oldest ocean."
 ]
 
 def main():
@@ -30,22 +47,30 @@ def main():
 
     models, tokenizer = setup_model_and_tokenizer()
 
-    history = None
-    response = None
+    num = 0
+    for batches in dialog:
 
-    for query in dialog:
+        history = None
+        response = None
 
-        print("\n\n=====================================================================================")
-        print("\n=== [ QUERY ] ===\n", query)
+        for query in batches:
 
-        if history != None:
-            history = (history, response)
+            print("\n\n=====================================================================================")
+            print("\n=== [ QUERY ] ===\n", query)
 
-        response, history = generate_text(models, tokenizer, query, history)
+            if history != None:
+                history = (history, response)
 
-        print("\n=== [ RESPONSE ] ===\n", response)
-        # print("\n === HISTORY SIZE ===\n", len(history))
-        # print("\n === HISTORY ===\n", history)
+            response, history = generate_text(models, tokenizer, query, history)
+            ppl = get_ppl(models, tokenizer, (query["text"], answers[num]), history)
+
+            print("\n=== [ RESPONSE ] ===\n", response)
+            # print("\n === HISTORY SIZE ===\n", len(history))
+            # print("\n === HISTORY ===\n", history)
+
+            print("\n=== [ PPL ] ===\n", ppl)
+
+            num = num + 1
 
     print("\n=== FINISH ===")
 
