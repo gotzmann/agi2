@@ -10,10 +10,10 @@ WORKDIR /app
 # Python 3.9.16
 
 # -- Build, tag, push and run image
-# sudo docker build --tag supermachina:0.3 .
-# sudo docker tag supermachina:0.3 cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
-# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
-# sudo docker run --rm -it supermachina:0.3 -- sh
+# sudo docker build --tag supermachina:0.4 .
+# sudo docker tag supermachina:0.4 cr.msk.sbercloud.ru/aijcontest/supermachina:0.4
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.4
+# sudo docker run --rm -it supermachina:0.4 -- sh
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
