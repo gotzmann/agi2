@@ -26,7 +26,7 @@ models:
 #    prefix: "\n\nUSER:\n"
 #    suffix: "\n\nASSISTANT:"
 
-    preamble: "You are the smart AI assistant. Please read the dialog and answer the question. Be short and precise!"
+    preamble: "Today ${DATE}. You are the smart AI assistant. Please read the dialog and answer the user's question. Be short and precise!"
     prefix: "\nUSER: "
     suffix: "\nASSISTANT:"
 

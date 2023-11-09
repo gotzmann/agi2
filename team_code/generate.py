@@ -107,7 +107,7 @@ def setup_model_and_tokenizer():
     # todo: allow re-entrant
 
     # debug
-    print("\nStarting LLaMAZoo... ", APP_PATH + "llamazoo")
+    print("\nStarting LLaMAZoo... ", APP_PATH + "llamazoo --config", configPath)
     llamazoo = subprocess.Popen([
             APP_PATH + "llamazoo", 
             "--server",
