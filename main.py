@@ -68,7 +68,7 @@ def main():
             # print("\n === HISTORY SIZE ===\n", len(history))
             # print("\n === HISTORY ===\n", history)
 
-            print("\n=== [ PPL ] ===\n", ppl)
+            print("\n=== [ PPL ] ===", ppl[0], "===")
 
             num = num + 1
 

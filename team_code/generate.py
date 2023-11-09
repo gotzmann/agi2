@@ -126,7 +126,7 @@ def setup_model_and_tokenizer():
     projection = nn.Linear(ENC_DIM, N_MODALITY_EMBS * EMB_DIM).to(device=model.device, dtype=model.dtype).eval()
     workdir = os.getcwd()
 
-    print("\n workdir = ", workdir)
+    print("\nWORKDIR = ", workdir)
 
     img_tokens_emb = None
     img_tokens_emb = torch.load(
@@ -218,6 +218,11 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     prompt = None
     response = None
 
+    for part in cur_query_list:
+        if part["type"] == "text":
+            prompt = part["content"]
+            history_tensor[num]["prompt"] = prompt
+
     if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
 
         try:
@@ -228,9 +233,6 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 history_tensor[0]["id"] = id
             else:
                 id = history_tensor[0]["id"]
-
-            prompt = cur_query_list[0]["content"]
-            history_tensor[num]["prompt"] = prompt
 
             status = ""
 
@@ -264,13 +266,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     # -- otherwise handle with baseline
 
     prompt = get_query_from_input(model, tokenizer, cur_query_list).to(DEVICE)
+    baselineResponse = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
+    print("\n=== BASELINE RESPONSE ===\n", baselineResponse)
 
     if response is None or response == "":
-        response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
-        history_tensor[num]["response"] = response
-        print("\n=== BASELINE RESPONSE ===\n", response)
+        response = baselineResponse
 
-    # -- update history and return results    
+    # -- update history and return results  
+
+    history_tensor[num]["response"] = response  
 
     #history_tensor = torch.concat([history_tensor, prompt], dim=1)
     history_tensor[num]["embd"] = torch.concat([history_tensor[num]["embd"], prompt], dim=1)
