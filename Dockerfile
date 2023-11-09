@@ -58,7 +58,8 @@ COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-
 # RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 # RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
+# -- See standard Python libs: https://docs.python.org/3/library/index.html
+RUN apt update && apt install -y --no-install-recommends python3-pip
 # RUN pip install requests
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
