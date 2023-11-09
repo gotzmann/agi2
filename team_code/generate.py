@@ -236,7 +236,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             history_tensor[0][num]["prompt"] = prompt
 
     # -- Generate answer with 70B model only if there is just TEXT modality and there no multi-modal history
-    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and history_tensor[0][num-1]["id"] != "":
+    if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and (num == 0 or history_tensor[0][num-1]["id"] != ""):
 
         try:
 
