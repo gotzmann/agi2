@@ -62,13 +62,11 @@ def main():
                 history = (history, response)
 
             response, history = generate_text(models, tokenizer, query, history)
-            ppl = get_ppl(models, tokenizer, (query, answers[num]), history)
+            ppl = get_ppl(models, tokenizer, (query, answers[num]), (history, response))
 
             print("\n=== [ RESPONSE ] ===\n", response)
-            # print("\n === HISTORY SIZE ===\n", len(history))
-            print("\n === HISTORY ===\n", (history, response))
-
             print("\n=== [ PPL ] ===", ppl[0], "===")
+            print("\n === HISTORY ===\n", )
 
             num = num + 1
 

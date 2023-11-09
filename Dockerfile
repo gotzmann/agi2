@@ -23,10 +23,6 @@ RUN git clone https://github.com/gotzmann/llamazoo.git && \
     cp llamazoo /app/llamazoo && \
     chmod +x /app/llamazoo
 
-# RUN git clone https://github.com/gotzmann/agi.git
-
-
-
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
 
@@ -41,12 +37,15 @@ WORKDIR /app
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
 
 COPY config.yaml /app/config.yaml
+COPY llamazoo  /app/llamazoo
 COPY model.gguf  /app/model.gguf
 COPY imagebind_huge.pth /app/imagebind_huge.pth
 COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
+RUN chmod +x /app/llamazoo
+
 # DEBUG
-ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
+# ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
 
 #USER jovyan
 #WORKDIR /home/jovyan
