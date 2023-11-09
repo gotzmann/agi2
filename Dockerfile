@@ -46,7 +46,7 @@ WORKDIR /app
 
 COPY config.yaml        /app/config.yaml
 COPY llamazoo           /app/llamazoo
-RUN chmod +x            /app/llamazoo
+# RUN chmod +x            /app/llamazoo
 
 # DEBUG
 # ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
