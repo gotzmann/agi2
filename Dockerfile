@@ -6,6 +6,9 @@
 # sudo docker tag supermachina:0.1 cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
 # sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
 
+# -- Build for multi platforms
+# sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
+
 # -- Show and prune Docker cache
 # sudo docker system df
 # sudo docker builder prune
