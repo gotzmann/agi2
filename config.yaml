@@ -2,7 +2,7 @@ id: "AGI"
 host: 0.0.0.0
 port: 8888
 log: /app/llamazoo.log
-deadline: 600
+deadline: 300
 sessions:
 debug: cuda
 
@@ -10,7 +10,7 @@ pods:
 
   -
     threads: 1
-    gpus: [ 100 ] # TODO: CUDA
+    gpus: [ 100 ]
     model: default
     batchsize: 512
 
@@ -20,6 +20,7 @@ models:
     id: default
     name: Yet Another Model
     path: /app/model.gguf
+    locale: en_US
     
 #    preamble: "# Today ${DATE}. You are the smart AI assistant. Please read the task and answer the question."
 #    prefix: "\n\nUSER:\n"
