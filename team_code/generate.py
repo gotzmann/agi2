@@ -234,42 +234,43 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text":
 
-        #try:
+        try:
 
-        # let store session ID as first history element
-        id = history_tensor[0][0]["id"]
-        if id == "":
-            id = str(uuid.uuid4())
-            history_tensor[0][0]["id"] = id
-        # if history_tensor[0][num]["id"] == "":
-        #    history_tensor[0][num]["id"] = id
+            # let store session ID as first history element
+            id = history_tensor[0][0]["id"]
+            if id == "":
+                id = str(uuid.uuid4())
+                history_tensor[0][0]["id"] = id
+            # if history_tensor[0][num]["id"] == "":
+            #    history_tensor[0][num]["id"] = id
 
-        #prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
-        #if history_tensor is None: # fixme
-        #    prompt = PROMPT + prompt
-
-        r = requests.post("http://127.0.0.1:8888/jobs", json={
-            "id": id,
-            "prompt": prompt 
-        })
+            r = requests.post("http://127.0.0.1:8888/jobs", json={
+                "id": id,
+                "prompt": prompt 
+            })
 
 #            print(f"Status Code: {r.status_code}")
 
-        # todo: timer watchdog?
-        status = ""
-        while r.status_code == 200 and status != "finished":
+            # todo: timer watchdog?
+            status = ""
+            while r.status_code == 200 and status != "finished":
 
-            time.sleep(10) # debug
-            r = requests.get("http://127.0.0.1:8888/jobs/" + id)
-            # print(r.json()) # debug
-            status = r.json()["status"]
-        
-        response = r.json()["output"]
-        history_tensor[0][num]["response"] = response
-        print("\n=== LLAMAZOO RESPONSE ===\n", response)
+                time.sleep(10) # debug
+                r = requests.get("http://127.0.0.1:8888/jobs/" + id)
+                # print(r.json()) # debug
+                status = r.json()["status"]
+            
+            try:
+                if r.status_code == 200:
+                    response = r.json()["output"]
+            except Exception as error:
+                print("\n=== JSON EXCEPTION ===\n", error)
 
-        #except Exception as error:
-            #print("\n=== EXCEPTION ===\n", error)
+            history_tensor[0][num]["response"] = response
+            print("\n=== LLAMAZOO RESPONSE ===\n", response)
+
+        except Exception as error:
+            print("\n=== EXCEPTION ===\n", error)
 
     # -- otherwise handle with baseline
 
