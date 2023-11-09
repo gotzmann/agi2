@@ -13,12 +13,8 @@ USER root
 #    apt upgrade -y && \
 #    apt install -y mc nano htop lsof make build-essential
 
-# RUN apt install -y mc
-
 RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
     tar -xf go1.20.linux-amd64.tar.gz -C /usr/local
-
-# LLAMA_CUBLAS=1 PATH=$PATH:/usr/local/go/bin CUDA_PATH=/usr/local/cuda-11 CUDA_DOCKER_ARCH=sm_80 make -j cuda && \
 
 RUN git clone https://github.com/gotzmann/llamazoo.git && \
     cd ./llamazoo && \
@@ -29,7 +25,7 @@ RUN git clone https://github.com/gotzmann/llamazoo.git && \
 
 # RUN git clone https://github.com/gotzmann/agi.git
 
-#COPY imagebind_huge.pth .checkpoints/imagebind_huge.pth
+
 
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
@@ -44,8 +40,10 @@ WORKDIR /app
 
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
 
-COPY config.yaml ./config.yaml
-COPY model.gguf  ./model.gguf
+COPY config.yaml /app/config.yaml
+COPY model.gguf  /app/model.gguf
+COPY imagebind_huge.pth /app/imagebind_huge.pth
+COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
 # DEBUG
 ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
