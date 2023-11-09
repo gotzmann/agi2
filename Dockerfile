@@ -84,5 +84,5 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY config.yaml /app/config.yaml
 
-USER jovyan
-WORKDIR /home/jovyan
+# USER jovyan
+# WORKDIR /home/jovyan
