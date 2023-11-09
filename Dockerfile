@@ -6,12 +6,16 @@
 # sudo docker tag supermachina:0.1 cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
 # sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.2
 
-# -- Show TOP 20 biggest files and folders
-# sudo du -ah / | sort -rh | head -n 20
-
 # -- Show and prune Docker cache
 # sudo docker system df
 # sudo docker builder prune
+
+# -- Show and remove unused images
+# sudo docker image ls
+# sudo docker image rm supermachina:0.1
+
+# -- Show TOP 20 biggest files and folders
+# sudo du -ah / | sort -rh | head -n 20
 
 # -- Reset GPU
 # nvidia-smi --gpu-reset
