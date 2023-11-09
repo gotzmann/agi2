@@ -1,8 +1,23 @@
 # Ubuntu 20.04.6 LTS
 # Python 3.9.16
 
+# -- Build, tag and push image
+# sudo docker build --tag supermachina:0.1 .
+# sudo docker tag supermachina:0.1 cr.msk.sbercloud.ru/aijcontest/supermachina:0.1
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.1
+
+# -- Show TOP 20 biggest files and folders
+# sudo du -ah / | sort -rh | head -n 20
+
+# -- Show and prune Docker cache
 # sudo docker system df
 # sudo docker builder prune
+
+# -- Reset GPU
+# nvidia-smi --gpu-reset
+
+# -- Show and kill processes using GPU
+# lsof | grep /dev/nvidia
 
 # FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
 
@@ -36,6 +51,8 @@ COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-
 # RUN pip install https://github.com/enthought/mayavi/zipball/master
 # RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 # RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install requests
 
 FROM base
 USER root
