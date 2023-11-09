@@ -34,7 +34,7 @@ dialog = [
 
 answers = [
     "The Pacific Ocean is the largest and deepest of the world ocean basins.",
-    "There are four pears and one red apple on the picture.",
+    "There are three pears and one red apple on the picture.",
     "That is the dog barking.",
     "Pacific Ocean border four continents in total.",
     "Yes, it's the oldest ocean."

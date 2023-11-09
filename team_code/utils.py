@@ -6,9 +6,15 @@ from imagebind.models.imagebind_model import ModalityType
 
 DEVICE = "cuda:0"
 # DEVICE = "cpu"
+
 EMB_DIM = 4096
 N_MODALITY_EMBS = 32
 
+# USER = "\nUSER: "
+# ASSISTANT = "\nASSISTANT:"
+
+USER =  "\nUser: " # "\nUser: "
+ASSISTANT = "\n Bot:" # "\n Bot: "
 
 # utils function that parses the format of the input query to a single sequence
 def get_query_from_input(model, tokenizer, input_list):
@@ -21,19 +27,12 @@ def get_query_from_input(model, tokenizer, input_list):
 
     all_emb = []
 
-    ai_ids = tokenizer.encode("\nASSISTANT:", add_special_tokens=False, return_tensors="pt").to(DEVICE) # "\n Bot: "
+    ai_ids = tokenizer.encode(ASSISTANT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
     ai_embeddings = base_model.model.embed_tokens(ai_ids)
 
-    # debug
-#    print("\nIDS: \\nBot: ", ai_ids)
-#    print("\nEMBDS: \\nBot: ", ai_embeddings)
-
-    prompt = "\nUSER: " # "\nUser: "
-    prompt_ids = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+    # prompt = USER
+    prompt_ids = tokenizer.encode(USER, add_special_tokens=False, return_tensors="pt").to(DEVICE)
     prompt_embeddings = base_model.model.embed_tokens(prompt_ids)
-
-    # debug
-#    print("\nIDS: \\nUser: ", prompt_ids)
 
     all_emb.append(prompt_embeddings)
 
