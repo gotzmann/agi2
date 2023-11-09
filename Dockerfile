@@ -3,6 +3,8 @@
 
 # FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
 
+# MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
+# MLSPACE_IMAGE_NAME=cuda11.7-torch2
 FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1
 
 USER root
@@ -11,23 +13,21 @@ USER root
 #    apt upgrade -y && \
 #    apt install -y mc nano htop lsof make build-essential
 
-RUN apt install -y mc
+# RUN apt install -y mc
 
 RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
     tar -xf go1.20.linux-amd64.tar.gz -C /usr/local
 
-# PATH=$PATH:/usr/local/go/bin LLAMA_CUBLAS=1 PATH=$PATH:/usr/local/go/bin CUDA_PATH=/usr/local/cuda-11 CUDA_DOCKER_ARCH=sm_80 make cuda && \
+# LLAMA_CUBLAS=1 PATH=$PATH:/usr/local/go/bin CUDA_PATH=/usr/local/cuda-11 CUDA_DOCKER_ARCH=sm_80 make -j cuda && \
 
 RUN git clone https://github.com/gotzmann/llamazoo.git && \
     cd ./llamazoo && \
-    PATH=$PATH:/usr/local/go/bin make llamazoo && \
+    LLAMA_CUBLAS=1 PATH=$PATH:/usr/local/go/bin CUDA_PATH=/usr/local/cuda-11 CUDA_DOCKER_ARCH=sm_80 make -j cuda && \
     mkdir /app && \
     cp llamazoo /app/llamazoo && \
     chmod +x /app/llamazoo
 
 # RUN git clone https://github.com/gotzmann/agi.git
-
-WORKDIR /app
 
 #COPY imagebind_huge.pth .checkpoints/imagebind_huge.pth
 
@@ -40,7 +40,15 @@ RUN pip install https://github.com/enthought/mayavi/zipball/master
 RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
 RUN pip install --no-cache-dir -r requirements.txt
 
+WORKDIR /app
+
 #COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
+
+COPY config.yaml ./config.yaml
+COPY model.gguf  ./model.gguf
+
+# DEBUG
+ENTRYPOINT [ "./llamazoo", "--server", "--debug" ]
 
 #USER jovyan
 #WORKDIR /home/jovyan

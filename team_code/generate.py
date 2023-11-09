@@ -178,14 +178,14 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         history_tensor = [
             {
                 "id": "",
-                "embd": prompt_embeddings,
                 "prompt": "",
-                "response": ""
+                "response": "",
+                "embd": prompt_embeddings
             }
         ]
 
     else:
-        print("\n === HISTORY ===\n", history) # debug
+        print("\n === HISTORY ===\n", history_tensor) # debug
         num = len(history_tensor)
         embd = torch.concat(
             [
@@ -195,9 +195,9 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         history_tensor.append(
             {
                 "id": "",
-                "embd": embd,
                 "prompt": "",
-                "response": ""
+                "response": "",
+                "embd": embd
             })
 #        try:
         #history_tensor = torch.concat(
@@ -228,17 +228,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
         try:
 
-            id = ""
-            if num == 0:
+            # let store session ID as first history element
+            id = history_tensor[0]["id"]
+            if id == "":
                 id = str(uuid.uuid4())
                 history_tensor[0]["id"] = id
-            else:
-                id = history_tensor[0]["id"]
-
-            status = ""
+            if history_tensor[num]["id"] == "":
+                history_tensor[num]["id"] = id
 
             #prompt = "\nUSER: " + prompt + "\nASSISTANT:" # fixme  
-
             #if history_tensor is None: # fixme
             #    prompt = PROMPT + prompt
 
@@ -249,6 +247,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
 #            print(f"Status Code: {r.status_code}")
 
+            status = ""
             while r.status_code == 200 and status != "finished":
 
                 time.sleep(10) # debug
