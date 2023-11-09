@@ -53,7 +53,7 @@ gen_params = {
 def gen_answer(model, tokenizer, query, history=None):
     num = len(history)
     # query = torch.cat([history, query], dim=1)
-    query = torch.cat([history[num-1].embd, query], dim=1)
+    query = torch.cat([history[num-1]["embd"], query], dim=1)
 #    print("\n\n=== gen_answer :: query ===\n\n", query)
 
     out = model.generate(
@@ -180,7 +180,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 "id": "",
                 "embd": prompt_embeddings,
                 "prompt": "",
-                "response": "",
+                "response": ""
             }
         ]
 
@@ -188,15 +188,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         num = len(history_tensor)
         embd = torch.concat(
             [
-                history_tensor[num-1].embd, 
-                get_text_emb(model[0], tokenizer, history_tensor[num-1].response)
+                history_tensor[num-1]["embd"], 
+                get_text_emb(model[0], tokenizer, history_tensor[num-1]["response"])
             ], dim=1)
         history_tensor.append(
             {
                 "id": "",
                 "embd": embd,
                 "prompt": "",
-                "response": "",
+                "response": ""
             })
 #        try:
         #history_tensor = torch.concat(
@@ -222,12 +222,15 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
         try:
 
+            id = ""
             if num == 0:
                 id = str(uuid.uuid4())
-                history_tensor[num].id = id
+                history_tensor[0]["id"] = id
+            else:
+                id = history_tensor[0]["id"]
 
             prompt = cur_query_list[0]["content"]
-            history_tensor[num].prompt = prompt
+            history_tensor[num]["prompt"] = prompt
 
             status = ""
 
@@ -251,7 +254,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 status = r.json()["status"]
             
             response = r.json()["output"]
-            history_tensor[num].response = response
+            history_tensor[num]["response"] = response
             print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
         except Exception as error:
@@ -264,13 +267,13 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 
     if response is None or response == "":
         response = gen_answer(model[0], tokenizer, prompt, history=history_tensor)
-        history_tensor[num].response = response
+        history_tensor[num]["response"] = response
         print("\n=== BASELINE RESPONSE ===\n", response)
 
     # -- update history and return results    
 
     #history_tensor = torch.concat([history_tensor, prompt], dim=1)
-    history_tensor[num].embd = torch.concat([history_tensor[num].embd, prompt], dim=1)
+    history_tensor[num]["embd"] = torch.concat([history_tensor[num]["embd"], prompt], dim=1)
 
     return response, history_tensor
 
@@ -290,7 +293,7 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
     else:
         num = len(history_tensor)
         #history_tensor = torch.concat([history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
-        history_tensor = torch.concat([history_tensor[num-1].embd, get_text_emb(model[0], tokenizer, history_tensor[num-1].response)], dim=1)
+        history_tensor = torch.concat([history_tensor[num-1]["embd"], get_text_emb(model[0], tokenizer, history_tensor[num-1]["response"])], dim=1)
 
     current_query = get_query_from_input(model, tokenizer, cur_query_tuple[0])
     current_answer = get_text_emb(model[0], tokenizer, cur_query_tuple[1])
