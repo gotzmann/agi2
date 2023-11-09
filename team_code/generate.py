@@ -279,7 +279,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     #history_tensor = torch.concat([history_tensor, prompt], dim=1)
     history_tensor[0][num]["embd"] = torch.concat([history_tensor[0][num]["embd"], prompt], dim=1)
 
-    return response, history_tensor
+    return response, history_tensor[0]
 
 
 # --- PPL ---
