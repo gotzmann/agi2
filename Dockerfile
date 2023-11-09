@@ -3,14 +3,17 @@
 # MLSPACE_IMAGE_PARENT=nvidia/cuda:-devel-ubuntu20.04
 # MLSPACE_IMAGE_NAME=cuda11.7-torch2
 FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
+USER root
+WORKDIR /app
 
 # Ubuntu 20.04.6 LTS
 # Python 3.9.16
 
-# -- Build, tag and push image
+# -- Build, tag, push and run image
 # sudo docker build --tag supermachina:0.3 .
 # sudo docker tag supermachina:0.3 cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
 # sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.3
+# sudo docker run --rm -it supermachina:0.3 -- sh
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
@@ -32,13 +35,10 @@ FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1 as base
 # -- Show and kill processes using GPU
 # lsof | grep /dev/nvidia
 
-USER root
-WORKDIR /app
-
 COPY model.gguf /app/model.gguf
+COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 # COPY imagebind_huge.pth /app/imagebind_huge.pth
 # COPY imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
-COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
 RUN apt update -y && \
     apt upgrade -y && \
@@ -53,6 +53,14 @@ RUN wget https://golang.org/dl/go1.20.linux-amd64.tar.gz && \
 #     mkdir /app && \
 #     cp llamazoo /app/llamazoo && \
 #     chmod +x /app/llamazoo
+
+RUN mkdir /app/git & \
+    cd /app/git & \
+    git clone https://github.com/gotzmann/llamazoo.git && \
+    cd ./llamazoo && \
+    PATH=$PATH:/usr/local/go/bin make -j llamazoo && \
+    cp llamazoo /app/llamazoo && \
+    chmod +x /app/llamazoo
 
 # json, time, traceback : standard python lib
 # numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
@@ -77,7 +85,7 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # COPY --from=base /app/projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 
 COPY config.yaml        /app/config.yaml
-COPY llamazoo           /app/llamazoo
+# COPY llamazoo           /app/llamazoo
 # RUN chmod +x            /app/llamazoo
 
 # DEBUG
