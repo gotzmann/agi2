@@ -45,7 +45,7 @@ gen_params = {
     "do_sample": False,
     "max_new_tokens": 80,
     "early_stopping": True,
-    "num_beams": 1,
+    "num_beams": 4, # 1,
     "remove_invalid_values": True,
     "eos_token_id": 29889,
     "pad_token_id": 29889,
@@ -131,8 +131,8 @@ def setup_model_and_tokenizer():
     print("\nWaiting for a minute...")
     time.sleep(60) # debug
 
-    tokenizer = None
-    model = None
+#    tokenizer = None
+#    model = None
 
     tokenizer = AutoTokenizer.from_pretrained(APP_PATH + "Llama-2-7B-fp16", padding_side="left", use_fast=False)
     model = AutoModelForCausalLM.from_pretrained(APP_PATH +  "Llama-2-7B-fp16", torch_dtype=torch.float16).eval().to(DEVICE)
@@ -147,19 +147,19 @@ def setup_model_and_tokenizer():
 
     projection = nn.Linear(ENC_DIM, N_MODALITY_EMBS * EMB_DIM).to(device=model.device, dtype=model.dtype).eval()
 
-    img_tokens_emb = None
+#    img_tokens_emb = None
     img_tokens_emb = torch.load(
         f"{workdir}/team_code/ckpts/IMG_EMB_LLaMa-7b-EN-Linear-ImageBind",
         map_location=model.device,
     )
 
-    audio_tokens_emb = None
+#    audio_tokens_emb = None
     audio_tokens_emb = torch.load(
         f"{workdir}/team_code/ckpts/AUDIO_EMB_LLaMa-7b-EN-Linear-ImageBind",
         map_location=model.device,
     )
 
-    projection = None
+#    projection = None
 #    projection = torch.load(
 #        f"{workdir}/team_code/ckpts/projection_LLaMa-7b-EN-Linear-ImageBind",
 #        map_location=model.device,
@@ -266,7 +266,8 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 "prompt": prompt
             })
 
-#            print(f"Status Code: {r.status_code}")
+            if DEBUG:
+                print(f"=== HTTP STATUS | {r.status_code} ===")
 
             # todo: timer watchdog?
             status = ""
@@ -284,6 +285,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 print("\n=== JSON EXCEPTION ===\n", error)
 
             history_tensor[0][num]["response"] = response
+
             if DEBUG:
                 print("\n=== LLAMAZOO RESPONSE ===\n", response)
 
