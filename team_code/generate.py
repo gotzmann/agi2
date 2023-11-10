@@ -18,12 +18,12 @@ from imagebind.models.imagebind_model import ModalityType
 
 # from .utils import get_query_from_input, get_text_emb
 
+DEBUG = False # True
+PROMPT = "You are smart AI assistant. Please read the dialog and answer the question. Be short and precise!\n"
+
 DEVICE = "cuda:0"
 EMB_DIM = 4096
 N_MODALITY_EMBS = 32
-
-DEBUG = False # True
-PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
 APP_PATH = "/app/"
 # DEVICE = torch.device("cuda:0")
 
@@ -104,7 +104,7 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
-    print("\n=== SuperMachina v0.6 ===\n")
+    print("\n=== SuperMachina v0.8 ===\n")
 
     workdir = os.getcwd()
     # print("\nWORKDIR = ", workdir)
