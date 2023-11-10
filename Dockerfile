@@ -1,5 +1,5 @@
-FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1
-# FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
+# FROM cr.msk.sbercloud.ru/aijcontest_official/fbc3_0:0.1
+FROM cr.msk.sbercloud.ru/aicloud-base-images-test/cuda11.7-torch2:fdf9bece-630252
 USER root
 WORKDIR /app
 
@@ -7,10 +7,10 @@ WORKDIR /app
 # Python 3.9.16
 
 # -- Build, tag, push and run image
-# sudo docker build --tag supermachina:0.8 .
-# sudo docker tag supermachina:0.8 cr.msk.sbercloud.ru/aijcontest/supermachina:0.8
-# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.8
-# sudo docker run --rm -it supermachina:0.8 -- sh
+# sudo docker build --tag supermachina:0.10 .
+# sudo docker tag supermachina:0.10 cr.msk.sbercloud.ru/aijcontest/supermachina:0.10
+# sudo docker push cr.msk.sbercloud.ru/aijcontest/supermachina:0.10
+# sudo docker run --rm -it supermachina:0.10 -- sh
 
 # -- Build for multi platforms
 # sudo docker buildx build --platform linux/amd64 -f ./Dockerfile --tag supermachina:0.2 .
@@ -35,16 +35,15 @@ WORKDIR /app
 # -- Show and kill processes using GPU
 # lsof | grep /dev/nvidia
 
+COPY ./Llama-2-7B-fp16 ./Llama-2-7B-fp16
 COPY model.gguf /app/model.gguf
 COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 COPY .checkpoints/imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
-COPY .checkpoints/imagebind_huge.pth /home/jovyan/.checkpoints/imagebind_huge.pth
-# COPY ./Llama-2-7B-fp16 /app/Llama-2-7B-fp16
 
+RUN chmod -R 666 /app/Llama-2-7B-fp16
 RUN chmod 666 /app/model.gguf
 RUN chmod 666 /app/projection_LLaMa-7b-EN-Linear-ImageBind
 RUN chmod 666 /app/.checkpoints/imagebind_huge.pth
-RUN chmod 666 /home/jovyan/.checkpoints/imagebind_huge.pth
 
 RUN apt update -y && \
     apt upgrade -y && \
@@ -66,27 +65,15 @@ RUN mkdir -p /app/git && \
     cd ./llamazoo && \
     PATH=$PATH:/usr/local/go/bin make -j llamazoo && \
     cp llamazoo /app/llamazoo && \
-    chmod 777 /app/llamazoo && \
-    chmod +x /app/llamazoo
+    chmod 777 /app/llamazoo
 
-# json, time, traceback : standard python lib
-# numpy : Requirement already satisfied: numpy in /home/user/conda/lib/python3.9/site-packages (from -r requirements.txt (line 3)) (1.24.1)
-
-#RUN pip install requests
-#RUN pip install sentencepiece
-#RUN pip install https://github.com/enthought/mayavi/zipball/master
-#RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
-
-# RUN pip install --no-cache-dir -r /app/requirements.txt
+#    && \
+#    chmod +x /app/llamazoo
 
 RUN pip install requests
 RUN pip install sentencepiece
 RUN pip install https://github.com/enthought/mayavi/zipball/master
 RUN pip install --upgrade git+https://github.com/lizagonch/ImageBind.git aac_datasets torchinfo
-
-# RUN pip install protobuf==3.20.0
-# RUN pip install -U transformers
-# RUN pip install peft==0.4.0
 
 # -- See standard Python libs: https://docs.python.org/3/library/index.html
 COPY requirements.txt /app/requirements.txt
@@ -94,6 +81,7 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY config.yaml /app/config.yaml
 RUN chmod 666 /app/config.yaml
+RUN chmod 777 /app
 
-# USER jovyan
-# WORKDIR /home/jovyan
+USER jovyan
+WORKDIR /home/jovyan
