@@ -40,10 +40,10 @@ COPY model.gguf /app/model.gguf
 COPY projection_LLaMa-7b-EN-Linear-ImageBind /app/projection_LLaMa-7b-EN-Linear-ImageBind
 COPY .checkpoints/imagebind_huge.pth /app/.checkpoints/imagebind_huge.pth
 
-RUN chmod -R 666 /app/Llama-2-7B-fp16
-RUN chmod 666 /app/model.gguf
-RUN chmod 666 /app/projection_LLaMa-7b-EN-Linear-ImageBind
-RUN chmod 666 /app/.checkpoints/imagebind_huge.pth
+# RUN chmod -R 666 /app/Llama-2-7B-fp16
+# RUN chmod 666 /app/model.gguf
+# RUN chmod 666 /app/projection_LLaMa-7b-EN-Linear-ImageBind
+# RUN chmod 666 /app/.checkpoints/imagebind_huge.pth
 
 RUN apt update -y && \
     apt upgrade -y && \
@@ -67,9 +67,6 @@ RUN mkdir -p /app/git && \
     cp llamazoo /app/llamazoo && \
     chmod 777 /app/llamazoo
 
-#    && \
-#    chmod +x /app/llamazoo
-
 RUN pip install requests
 RUN pip install sentencepiece
 RUN pip install https://github.com/enthought/mayavi/zipball/master
@@ -80,8 +77,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY config.yaml /app/config.yaml
-RUN chmod 666 /app/config.yaml
-RUN chmod 777 /app
+RUN touch /app/llamazoo.log && chmod 666 /app/llamazoo.log
 
 USER jovyan
 WORKDIR /home/jovyan
