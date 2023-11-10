@@ -3,8 +3,10 @@ import uuid
 import time
 import subprocess
 
-import torch.nn as nn
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import os.path
@@ -14,12 +16,22 @@ from imagebind import data
 from imagebind.models import imagebind_model
 from imagebind.models.imagebind_model import ModalityType
 
-from .utils import get_query_from_input, get_text_emb
+# from .utils import get_query_from_input, get_text_emb
+
+DEVICE = "cuda:0"
+EMB_DIM = 4096
+N_MODALITY_EMBS = 32
 
 DEBUG = False # True
 PROMPT = "You are the smart AI assistant. Please read the dialog with user and answer the question. Be short and precise!\n"
 APP_PATH = "/app/"
-DEVICE = torch.device("cuda:0")
+# DEVICE = torch.device("cuda:0")
+
+# USER = "\nUSER: "
+# ASSISTANT = "\nASSISTANT:"
+
+USER =  "\nUser: " # "\nUser: "
+ASSISTANT = "\n Bot:" # "\n Bot: "
 
 DIALOGUE_DICT = {}
 
@@ -100,7 +112,7 @@ def setup_model_and_tokenizer():
     configPath = APP_PATH + "config.yaml"
     freshConfig = workdir + "/config.yaml"
     if os.path.exists(freshConfig):
-        configPath = freshConfig 
+        configPath = freshConfig
 
     # todo: allow re-entrant
     # Reset GPU: nvidia-smi --gpu-reset
@@ -108,12 +120,12 @@ def setup_model_and_tokenizer():
 
     print("\nStarting LLaMAZoo... ", APP_PATH + "llamazoo --config", configPath)
     llamazoo = subprocess.Popen([
-            APP_PATH + "llamazoo", 
+            APP_PATH + "llamazoo",
             "--server",
             "--config",
             configPath,
-        ], 
-        stdout=subprocess.PIPE, 
+        ],
+        stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
     print("\nWaiting for a minute...")
@@ -123,14 +135,14 @@ def setup_model_and_tokenizer():
     model = None
 
     tokenizer = AutoTokenizer.from_pretrained(APP_PATH + "Llama-2-7B-fp16", padding_side="left", use_fast=False)
-    model = AutoModelForCausalLM.from_pretrained(APP_PATH +  "Llama-2-7B-fp16", torch_dtype=torch.float16).eval().to(device=DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(APP_PATH +  "Llama-2-7B-fp16", torch_dtype=torch.float16).eval().to(DEVICE)
 
     # Instantiate model for image and audio embeddings
-    model_imagebind = imagebind_huge(pretrained=True).eval().to(device=DEVICE)
+    model_imagebind = imagebind_huge(pretrained=True).eval().to(DEVICE)
     model_imagebind.query_dict = {}
-        
-    EMB_DIM = 4096
-    N_MODALITY_EMBS = 32
+
+#    EMB_DIM = 4096
+#    N_MODALITY_EMBS = 32
     ENC_DIM = model_imagebind.modality_heads[ModalityType.VISION][-1].out_features
 
     projection = nn.Linear(ENC_DIM, N_MODALITY_EMBS * EMB_DIM).to(device=model.device, dtype=model.dtype).eval()
@@ -197,7 +209,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
         num = len(history_tensor[0])
         embd = torch.concat(
             [
-                history_tensor[0][num-1]["embd"], 
+                history_tensor[0][num-1]["embd"],
                 get_text_emb(model[0], tokenizer, history_tensor[1])
             ], dim=1)
         history_tensor[0].append(
@@ -211,7 +223,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 #        try:
         #history_tensor = torch.concat(
         #    [
-        #        history_tensor[0], 
+        #        history_tensor[0],
         #        get_text_emb(model[0], tokenizer, history_tensor[1])
         #    ], dim=1)
 
@@ -219,9 +231,9 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
 #            print("\n=== [ERR] === Exception with history_tensor ===\n", error)
 
     # debug
-     
-    #print("\n\n=== tokenizer.batch_decode(history_tensor) ===\n\n") 
-    #tokenizer.batch_decode(history_tensor)    
+
+    #print("\n\n=== tokenizer.batch_decode(history_tensor) ===\n\n")
+    #tokenizer.batch_decode(history_tensor)
 
     # -- redirect simple text questions to LLaMAZoo
 
@@ -234,7 +246,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             history_tensor[0][num]["prompt"] = prompt
 
     # -- Generate answer with 70B model only if:
-    #    1) query consist only of one text question and 
+    #    1) query consist only of one text question and
     #    2) there is no multi-modal history
 
     if len(cur_query_list) == 1 and cur_query_list[0]["type"] == "text" and (num == 0 or history_tensor[0][num-1]["session"] != ""):
@@ -251,7 +263,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
             r = requests.post("http://127.0.0.1:8888/jobs", json={
                 "id": id,
                 "session": session,
-                "prompt": prompt 
+                "prompt": prompt
             })
 
 #            print(f"Status Code: {r.status_code}")
@@ -264,7 +276,7 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
                 r = requests.get("http://127.0.0.1:8888/jobs/" + id)
                 # print(r.json()) # debug
                 status = r.json()["status"]
-            
+
             try:
                 if r.status_code == 200:
                     response = r.json()["output"]
@@ -288,9 +300,9 @@ def generate_text(model, tokenizer, cur_query_list, history_tensor=None):
     if response is None or response == "":
         response = baselineResponse
 
-    # -- update history and return results  
+    # -- update history and return results
 
-    history_tensor[0][num]["response"] = response  
+    history_tensor[0][num]["response"] = response
 
     #history_tensor = torch.concat([history_tensor, prompt], dim=1)
     history_tensor[0][num]["embd"] = torch.concat([history_tensor[0][num]["embd"], prompt], dim=1)
@@ -311,7 +323,7 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
         prompt_ids = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt").to(DEVICE)
         prompt_embeddings = model[0].model.embed_tokens(prompt_ids)
         history_tensor = prompt_embeddings
-        
+
     else:
         num = len(history_tensor[0])
         #history_tensor = torch.concat([history_tensor[0], get_text_emb(model[0], tokenizer, history_tensor[1])], dim=1)
@@ -323,7 +335,7 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
     # Input dialogue query with history
     dialogue_emb = torch.concat([history_tensor, current_query], dim=1).to(DEVICE)
     inputs_embeds=torch.concat([dialogue_emb, current_answer], dim=1)
-    
+
     loss = nn.CrossEntropyLoss()
     with torch.no_grad():
         out_logits = model[0](inputs_embeds=inputs_embeds).logits
@@ -333,8 +345,131 @@ def get_ppl(model, tokenizer, cur_query_tuple, history_tensor=None):
     context_before_labels = torch.LongTensor([-100] * dialogue_emb.shape[1]).unsqueeze(0)
     labels = torch.concat([context_before_labels, labels], dim=1).to(DEVICE)
     shift_labels = labels[..., 1:].contiguous()
-    
+
     neg_log_likelihood = loss(shift_logits.transpose(1, 2), shift_labels)
     ppl = torch.exp2(neg_log_likelihood)
-    
+
     return ppl.item(), dialogue_emb
+
+# === UTILS.py ===
+
+# utils function that parses the format of the input query to a single sequence
+def get_query_from_input(model, tokenizer, input_list):
+
+    base_model = model[0]
+    model_imagebind = model[1]
+    img_tokens_emb = model[2]
+    audio_tokens_emb = model[3]
+    projection = model[4]
+
+    all_emb = []
+
+    ai_ids = tokenizer.encode(ASSISTANT, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+    ai_embeddings = base_model.model.embed_tokens(ai_ids)
+
+    # prompt = USER
+    prompt_ids = tokenizer.encode(USER, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+    prompt_embeddings = base_model.model.embed_tokens(prompt_ids)
+
+    all_emb.append(prompt_embeddings)
+
+    for el in input_list:
+
+        if el["type"] == "text":
+
+            query = el["content"]
+            query_ids = tokenizer.encode(query, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+            query_embeddings = base_model.model.embed_tokens(query_ids)
+            all_emb.append(query_embeddings)
+
+#            print("\n === TEXT SIZE ===\n\n", len(all_emb))
+#            print("\n === TEXT EMB ===\n\n", all_emb)
+
+        elif el["type"] == "image":
+
+            modality_start_emb, modality_end_emb = img_tokens_emb
+            filepath = f"{el['content']}"
+
+            if filepath in model_imagebind.query_dict:
+                projected_modality_embs = model_imagebind.query_dict[filepath]
+            else:
+                modality_embedding = encode_image(model_imagebind, filepath).to(device=base_model.device, dtype=base_model.dtype)
+                projected_modality_embs = projection(modality_embedding).to(device=base_model.device, dtype=base_model.dtype)
+                model_imagebind.query_dict[filepath] = projected_modality_embs
+
+            all_emb.extend(
+                [
+                    modality_start_emb[None, None].to(device=base_model.device, dtype=base_model.dtype),
+                    projected_modality_embs.reshape(1, N_MODALITY_EMBS, EMB_DIM),
+                    modality_end_emb[None, None].to(device=base_model.device, dtype=base_model.dtype),
+                ]
+            )
+
+#            print("\n === IMAGE SIZE ===\n\n", len(all_emb))
+#            print("\n === IMAGE EMB ===\n\n", all_emb)
+
+        else:
+
+            modality_start_emb, modality_end_emb = audio_tokens_emb
+            filepath = f"{el['content']}"
+
+            if filepath in model_imagebind.query_dict:
+                projected_modality_embs = model_imagebind.query_dict[filepath]
+            else:
+                modality_embedding = encode_audio(model_imagebind, filepath).to(device=base_model.device, dtype=base_model.dtype)
+                projected_modality_embs = projection(modality_embedding).to(device=base_model.device, dtype=base_model.dtype)
+                model_imagebind.query_dict[filepath] = projected_modality_embs
+
+            all_emb.extend(
+                [
+                    modality_start_emb[None, None].to(device=base_model.device, dtype=base_model.dtype),
+                    projected_modality_embs.reshape(1, N_MODALITY_EMBS, EMB_DIM),
+                    modality_end_emb[None, None].to(device=base_model.device, dtype=base_model.dtype),
+                ]
+            )
+
+#            print("\n === AUDIO SIZE ===\n\n", len(all_emb))
+#            print("\n === AUDIO EMB ===\n\n", all_emb)
+
+        all_emb.append(ai_embeddings)
+
+        embeddings = torch.cat(
+            all_emb,
+            dim=1,
+        )
+
+    return embeddings
+
+
+def get_text_emb(model, tokenizer, text):
+    if text is None or len(text) == 0:
+        text = "I don't know.\n"
+    text_ids = tokenizer.encode(text, add_special_tokens=False, return_tensors="pt").to(DEVICE)
+    text_embeddings = model.model.embed_tokens(text_ids)
+    return text_embeddings
+
+
+@torch.no_grad()
+def encode_audio(model_imagebind, audio_paths, normalize=True):
+    if isinstance(audio_paths, str):
+        audio_paths = [audio_paths]
+    inputs = {
+        ModalityType.AUDIO: data.load_and_transform_audio_data(audio_paths=audio_paths, device=DEVICE),
+    }
+    universal_embeddings = model_imagebind(inputs)[ModalityType.AUDIO].to(DEVICE)
+    if normalize:
+        universal_embeddings = F.normalize(universal_embeddings, dim=-1)
+    return universal_embeddings
+
+
+@torch.no_grad()
+def encode_image(model_imagebind, image_paths, normalize=True):
+    if isinstance(image_paths, str):
+        image_paths = [image_paths]
+    inputs = {
+        ModalityType.VISION: data.load_and_transform_vision_data(image_paths, DEVICE),
+    }
+    universal_embeddings = model_imagebind(inputs)[ModalityType.VISION].to(DEVICE)
+    if normalize:
+        universal_embeddings = F.normalize(universal_embeddings, dim=-1)
+    return universal_embeddings
