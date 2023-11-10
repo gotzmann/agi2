@@ -104,7 +104,7 @@ def imagebind_huge(pretrained=False):
 # Function that returns model and tokenizer that will be used during the generation
 def setup_model_and_tokenizer():
 
-    print("\n=== SuperMachina v0.10 ===\n")
+    print("\n=== SuperMachina v0.12 ===\n")
 
     workdir = os.getcwd()
     # print("\nWORKDIR = ", workdir)
