@@ -128,8 +128,8 @@ def setup_model_and_tokenizer():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
-    print("\nWaiting for a minute...")
-    time.sleep(60) # debug
+    print("\nWaiting for 5 minutes...")
+    time.sleep(300) # debug
 
 #    tokenizer = None
 #    model = None
